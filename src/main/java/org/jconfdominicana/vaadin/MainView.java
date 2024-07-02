@@ -48,7 +48,6 @@ public class MainView extends AppLayout implements BeforeEnterObserver {
 
         HorizontalLayout header = new HorizontalLayout(flexLayout);
 
-
         if (securityIdentity.getPrincipal() != null) {
             Button logoutButton = new Button("Logout", e -> securityService.logout());
             flexLayout.add(logoutButton);

@@ -14,15 +14,15 @@ quarkus:
         custom1:
           paths: /api/*
           policy: authenticated
-          auth-mechanism: session
+          auth-mechanism: bearer
         custom2:
           paths: /*
           policy: permit
           auth-mechanism: form
-        vaadin:
-          paths: ["/VAADIN/*", "/favicon.ico", "/robots.txt", "/manifest.webmanifest", "/sw.js", "/offline.html", "/icons/*", "/images/*", "/styles/*", "/h2-console/*", "/q/*"]
-          policy: permit
-          auth-mechanism: basic
+#        vaadin:
+#          paths: ["/VAADIN/*", "/favicon.ico", "/robots.txt", "/manifest.webmanifest", "/sw.js", "/offline.html", "/icons/*", "/images/*", "/styles/*", "/h2-console/*", "/q/*"]
+#          policy: permit
+#          auth-mechanism: basic
       proactive: true
 
   datasource:

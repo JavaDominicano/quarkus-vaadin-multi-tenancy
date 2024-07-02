@@ -23,19 +23,19 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class CustomAuthMechanism implements HttpAuthenticationMechanism {
 
+    private static final String SCHEME = "Bearer";
+
     public static final Logger LOGGER = Logger.getLogger(CustomAuthMechanism.class.getName());
 
 
     @Override
     public Uni<SecurityIdentity> authenticate(RoutingContext context, final IdentityProviderManager identityProviderManager) {
+        LOGGER.info("Accessing from api route");
 
-        LOGGER.info("Holi");
-
+        context.put(HttpAuthenticationMechanism.class.getName(), this);
         AuthenticationRequest credentials = new TokenAuthenticationRequest(new SessionTokenCredential(""));
-        return Uni.createFrom().emitter(emitter -> identityProviderManager.authenticate(HttpSecurityUtils
-                .setRoutingContextAttribute(credentials, context))
-                .subscribe()
-                .with(emitter::complete));
+        return identityProviderManager.authenticate(HttpSecurityUtils
+                .setRoutingContextAttribute(credentials, context));
     }
 
     @Override
@@ -43,14 +43,14 @@ public class CustomAuthMechanism implements HttpAuthenticationMechanism {
         ChallengeData res = new ChallengeData(
                 HttpResponseStatus.UNAUTHORIZED.code(),
                 HttpHeaderNames.WWW_AUTHENTICATE,
-                "Bearer"
+                SCHEME
         );
         return Uni.createFrom().item(res);
     }
 
     @Override
     public Uni<HttpCredentialTransport> getCredentialTransport(RoutingContext context) {
-        return Uni.createFrom().item(new HttpCredentialTransport(HttpCredentialTransport.Type.AUTHORIZATION, "session"));
+        return Uni.createFrom().item(new HttpCredentialTransport(HttpCredentialTransport.Type.AUTHORIZATION, SCHEME));
     }
 
     @Override
