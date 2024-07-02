@@ -1,12 +1,13 @@
 package org.jconfdominicana.security.filters;
 
+import com.vaadin.flow.server.VaadinSession;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 
-@WebFilter("/*")
+//@WebFilter("/*")
 public class CustomWebFilter implements Filter {
 
     @Override

@@ -7,6 +7,8 @@ import io.quarkus.security.identity.IdentityProviderManager;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.identity.request.AuthenticationRequest;
 import io.quarkus.security.identity.request.TokenAuthenticationRequest;
+import io.quarkus.security.identity.request.TrustedAuthenticationRequest;
+import io.quarkus.security.identity.request.UsernamePasswordAuthenticationRequest;
 import io.quarkus.vertx.http.runtime.security.ChallengeData;
 import io.quarkus.vertx.http.runtime.security.HttpAuthenticationMechanism;
 import io.quarkus.vertx.http.runtime.security.HttpCredentialTransport;
@@ -50,10 +52,5 @@ public class CustomAuthMechanism implements HttpAuthenticationMechanism {
     @Override
     public Set<Class<? extends AuthenticationRequest>> getCredentialTypes() {
         return Collections.singleton(TokenAuthenticationRequest.class);
-    }
-
-    @Override
-    public Uni<Boolean> sendChallenge(RoutingContext context) {
-        return HttpAuthenticationMechanism.super.sendChallenge(context);
     }
 }

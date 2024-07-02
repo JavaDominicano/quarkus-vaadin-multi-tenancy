@@ -11,7 +11,7 @@ import jakarta.ws.rs.Path;
 public class ApiResources {
 
     @GET()
-    @RolesAllowed("ADMIN")
+//    @RolesAllowed("ADMIN")
     @Path("/123")
 //    @HttpAuthenticationMechanism("session")
     public String hola() {

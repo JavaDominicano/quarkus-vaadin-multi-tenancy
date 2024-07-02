@@ -1,7 +1,11 @@
 package org.jconfdominicana.vaadin;
 
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.server.VaadinSession;
+import io.quarkus.security.identity.SecurityIdentity;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 
 import com.vaadin.flow.component.Key;
@@ -16,14 +20,20 @@ import com.vaadin.flow.router.Route;
  * The main view contains a button and a click listener.
  */
 @Route("")
-public class MainView extends VerticalLayout {
+@RolesAllowed("admin")
+public class MainView extends VerticalLayout implements BeforeEnterObserver {
 
     @Inject
     GreetService greetService;
 
-    public MainView() {
+    @Inject
+    SecurityIdentity securityIdentity;
+
+    public MainView(SecurityIdentity securityIdentity) {
+
         // Use TextField for standard text input
         TextField textField = new TextField("Your name");
+        textField.setValue(securityIdentity.getPrincipal().getName());
         textField.addThemeName("bordered");
 
         // Button click listeners can be defined as lambda expressions
@@ -45,5 +55,9 @@ public class MainView extends VerticalLayout {
         addClassName("centered-content");
 
         add(textField, button);
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
     }
 }

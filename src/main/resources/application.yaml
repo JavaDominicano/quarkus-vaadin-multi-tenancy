@@ -1,14 +1,15 @@
 quarkus:
   security:
-    users:
-      embedded: true
-      plain-text: true
-      users:
-        alice: alice
-      roles:
-        alice: admin
+    events:
+      enabled: true
   http:
     auth:
+      form:
+        enabled: true
+        landing-page: /
+        error-page: login?error
+        username-parameter: username
+        password-parameter: password
       permission:
         custom1:
           paths: /api/*
@@ -16,6 +17,10 @@ quarkus:
           auth-mechanism: session
         custom2:
           paths: /*
+          policy: permit
+          auth-mechanism: form
+        vaadin:
+          paths: ["/VAADIN/*", "/favicon.ico", "/robots.txt", "/manifest.webmanifest", "/sw.js", "/offline.html", "/icons/*", "/images/*", "/styles/*", "/h2-console/*", "/q/*"]
           policy: permit
           auth-mechanism: basic
 
