@@ -8,7 +8,7 @@ import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.identity.request.TokenAuthenticationRequest;
 import io.smallrye.mutiny.Uni;
 
-public abstract class JWTAbstractIdentityProvider implements IdentityProvider<TokenAuthenticationRequest> {
+public abstract class AbstractIdentityProvider implements IdentityProvider<TokenAuthenticationRequest> {
 
     @Override
     public Uni<SecurityIdentity> authenticate(TokenAuthenticationRequest request, AuthenticationRequestContext context) {

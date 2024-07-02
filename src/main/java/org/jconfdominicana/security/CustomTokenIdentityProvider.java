@@ -15,7 +15,7 @@ import java.util.Set;
 
 @ApplicationScoped
 @AllArgsConstructor
-public class IdentityProviderTokenAuth extends JWTAbstractIdentityProvider {
+public class CustomTokenIdentityProvider extends AbstractIdentityProvider {
 
     private final UserRepository userRepository;
 
