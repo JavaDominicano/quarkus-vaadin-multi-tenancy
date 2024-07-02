@@ -6,16 +6,19 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 
-@WebFilter("/")
+@WebFilter("/*")
 public class CustomWebFilter implements Filter {
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        System.out.println(((HttpServletRequest) servletRequest).getSession());
-        ((HttpServletRequest) servletRequest).getSession()
-                        .setAttribute("User", "Probando");
+    public void doFilter(ServletRequest servletRequest, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
 
-        filterChain.doFilter(servletRequest, servletResponse);
+        System.out.println(request.getRequestURI());
+
+        request.getSession()
+                .removeAttribute("User");
+
+        chain.doFilter(request, response);
     }
 
 
