@@ -1,5 +1,7 @@
-package org.jconfdominicana.example;
+package org.jconfdominicana.vaadin;
 
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.server.VaadinSession;
 import jakarta.inject.Inject;
 
 import com.vaadin.flow.component.Key;
@@ -26,7 +28,8 @@ public class MainView extends VerticalLayout {
 
         // Button click listeners can be defined as lambda expressions
         Button button = new Button("Say hello", e -> {
-            add(new Paragraph(greetService.greet(textField.getValue())));
+//            add(new Paragraph(greetService.greet(textField.getValue())));
+            Notification.show("Hello " + textField.getValue());
         });
 
         // Theme variants give you predefined extra styles for components.

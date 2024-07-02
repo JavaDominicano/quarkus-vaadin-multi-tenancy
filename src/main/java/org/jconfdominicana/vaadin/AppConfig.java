@@ -1,4 +1,4 @@
-package org.jconfdominicana.example;
+package org.jconfdominicana.vaadin;
 
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.theme.Theme;

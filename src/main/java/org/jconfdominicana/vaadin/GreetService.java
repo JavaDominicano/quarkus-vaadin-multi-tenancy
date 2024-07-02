@@ -1,4 +1,4 @@
-package org.jconfdominicana.example;
+package org.jconfdominicana.vaadin;
 
 import jakarta.enterprise.context.Dependent;
 

@@ -1,7 +1,15 @@
-package org.jconfdominicana;
+package org.jconfdominicana.model;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 
 /**
@@ -24,6 +32,14 @@ import jakarta.persistence.Entity;
  * }
  */
 @Entity
-public class MyEntity extends PanacheEntity {
-    public String field;
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(name = "tenant")
+public class Tenant implements Serializable {
+
+    @Id
+    @GeneratedValue
+    public Long id;
 }
