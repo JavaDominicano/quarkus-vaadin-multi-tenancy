@@ -56,6 +56,9 @@ public class MainView extends AppLayout implements BeforeEnterObserver {
         }
 
         addToNavbar(header);
+
+        Text text = new Text("User logged: " + securityService.getAuthenticationUser());
+        setContent(text);
     }
 
     @Override
