@@ -5,7 +5,6 @@ import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import jakarta.transaction.Transactional;
 import org.jconfdominicana.model.User;
 import org.jconfdominicana.repositories.users.UserRepository;
