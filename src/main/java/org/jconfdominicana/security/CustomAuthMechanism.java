@@ -3,18 +3,18 @@ package org.jconfdominicana.security;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.quarkus.security.credential.PasswordCredential;
 import io.quarkus.security.identity.IdentityProviderManager;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.identity.request.AuthenticationRequest;
 import io.quarkus.security.identity.request.TokenAuthenticationRequest;
 import io.quarkus.security.identity.request.TrustedAuthenticationRequest;
 import io.quarkus.security.identity.request.UsernamePasswordAuthenticationRequest;
-import io.quarkus.vertx.http.runtime.security.ChallengeData;
-import io.quarkus.vertx.http.runtime.security.HttpAuthenticationMechanism;
-import io.quarkus.vertx.http.runtime.security.HttpCredentialTransport;
+import io.quarkus.vertx.http.runtime.security.*;
 import io.smallrye.mutiny.Uni;
 import io.vertx.ext.web.RoutingContext;
 import jakarta.enterprise.context.ApplicationScoped;
+import lombok.AllArgsConstructor;
 
 import java.util.Collections;
 import java.util.Set;
@@ -25,13 +25,17 @@ public class CustomAuthMechanism implements HttpAuthenticationMechanism {
 
     public static final Logger LOGGER = Logger.getLogger(CustomAuthMechanism.class.getName());
 
+
     @Override
-    public Uni<SecurityIdentity> authenticate(RoutingContext context, IdentityProviderManager identityProviderManager) {
+    public Uni<SecurityIdentity> authenticate(RoutingContext context, final IdentityProviderManager identityProviderManager) {
 
         LOGGER.info("Holi");
 
         AuthenticationRequest credentials = new TokenAuthenticationRequest(new SessionTokenCredential(""));
-        return identityProviderManager.authenticate(credentials);
+        return Uni.createFrom().emitter(emitter -> identityProviderManager.authenticate(HttpSecurityUtils
+                .setRoutingContextAttribute(credentials, context))
+                .subscribe()
+                .with(emitter::complete));
     }
 
     @Override

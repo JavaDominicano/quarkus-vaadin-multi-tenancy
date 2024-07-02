@@ -23,6 +23,7 @@ quarkus:
           paths: ["/VAADIN/*", "/favicon.ico", "/robots.txt", "/manifest.webmanifest", "/sw.js", "/offline.html", "/icons/*", "/images/*", "/styles/*", "/h2-console/*", "/q/*"]
           policy: permit
           auth-mechanism: basic
+      proactive: true
 
   datasource:
     db-kind: postgresql
@@ -30,6 +31,7 @@ quarkus:
       max-size: 16
 
   hibernate-orm:
+#    multitenant: schema
     dialect: "org.hibernate.dialect.PostgreSQLDialect"
     database:
       generation: drop-and-create

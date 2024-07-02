@@ -1,9 +1,17 @@
 package org.jconfdominicana.vaadin;
 
+import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -15,46 +23,39 @@ import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+import org.jconfdominicana.security.SecurityService;
+
+import java.util.stream.Collectors;
 
 /**
  * The main view contains a button and a click listener.
  */
 @Route("")
 @RolesAllowed("admin")
-public class MainView extends VerticalLayout implements BeforeEnterObserver {
+public class MainView extends AppLayout implements BeforeEnterObserver {
 
     @Inject
     GreetService greetService;
 
-    @Inject
-    SecurityIdentity securityIdentity;
+    public MainView(SecurityIdentity securityIdentity, SecurityService securityService) {
 
-    public MainView(SecurityIdentity securityIdentity) {
+        H1 logo = new H1("Multitenancy");
+        logo.addClassName("logo");
+        Div div = new Div(logo);
+        FlexLayout flexLayout = new FlexLayout(div);
+        flexLayout.setFlexDirection(FlexLayout.FlexDirection.ROW);
+//        flexLayout.setClassName(LumoUtility.Width.FULL);
 
-        // Use TextField for standard text input
-        TextField textField = new TextField("Your name");
-        textField.setValue(securityIdentity.getPrincipal().getName());
-        textField.addThemeName("bordered");
+        HorizontalLayout header = new HorizontalLayout(flexLayout);
 
-        // Button click listeners can be defined as lambda expressions
-        Button button = new Button("Say hello", e -> {
-//            add(new Paragraph(greetService.greet(textField.getValue())));
-            Notification.show("Hello " + textField.getValue());
-        });
 
-        // Theme variants give you predefined extra styles for components.
-        // Example: Primary button is more prominent look.
-        button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        if (securityIdentity.getPrincipal() != null) {
+            Button logoutButton = new Button("Logout", e -> securityService.logout());
+            flexLayout.add(logoutButton);
+            header = new HorizontalLayout(flexLayout);
+        }
 
-        // You can specify keyboard shortcuts for buttons.
-        // Example: Pressing enter in this view clicks the Button.
-        button.addClickShortcut(Key.ENTER);
-
-        // Use custom CSS classes to apply styling. This is defined in
-        // shared-styles.css.
-        addClassName("centered-content");
-
-        add(textField, button);
+        addToNavbar(header);
     }
 
     @Override

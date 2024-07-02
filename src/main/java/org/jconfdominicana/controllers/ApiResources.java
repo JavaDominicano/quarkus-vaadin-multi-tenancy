@@ -1,20 +1,27 @@
 package org.jconfdominicana.controllers;
 
 
-import io.quarkus.vertx.http.runtime.security.annotation.HttpAuthenticationMechanism;
+import io.vertx.core.json.JsonObject;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.resource.spi.AuthenticationMechanism;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
 
 @Path("/api")
 public class ApiResources {
 
     @GET()
-//    @RolesAllowed("ADMIN")
+    @RolesAllowed("api")
     @Path("/123")
-//    @HttpAuthenticationMechanism("session")
-    public String hola() {
-        return "Hola";
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response json() {
+        return Response.status(200)
+                .entity(new JsonObject())
+                .build();
     }
 }

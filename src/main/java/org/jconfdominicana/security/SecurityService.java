@@ -1,5 +1,6 @@
 package org.jconfdominicana.security;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinResponse;
 import io.quarkus.security.runtime.SecurityIdentityAssociation;
 import jakarta.enterprise.context.RequestScoped;
@@ -20,6 +21,7 @@ public class SecurityService {
     }
 
     public void logout() {
+        UI.getCurrent().getPage().setLocation("/login");
         NewCookie cookie = new NewCookie.Builder("quarkus-credential")
                 .path("/")
                 .maxAge(0)

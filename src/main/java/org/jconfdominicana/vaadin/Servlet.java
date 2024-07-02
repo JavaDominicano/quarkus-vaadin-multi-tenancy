@@ -7,9 +7,9 @@ import jakarta.servlet.annotation.WebInitParam;
 import jakarta.servlet.annotation.WebServlet;
 import org.jboss.logging.Logger;
 
-@WebServlet(urlPatterns = "/*", name = "VaadinFlowServlet", asyncSupported = true, initParams = {
-        @WebInitParam(name = "org.atmosphere.websocket.suppressJSR356", value = "false"),
-})
+//@WebServlet(urlPatterns = "/*", name = "VaadinFlowServlet", asyncSupported = true, initParams = {
+//        @WebInitParam(name = "org.atmosphere.websocket.suppressJSR356", value = "true"),
+//})
 public class Servlet extends QuarkusVaadinServlet implements SessionInitListener {
 
     public static final Logger LOG = Logger.getLogger(Servlet.class.getName());
