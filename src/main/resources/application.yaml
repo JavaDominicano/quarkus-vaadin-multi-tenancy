@@ -1,0 +1,34 @@
+quarkus:
+  security:
+    users:
+      embedded: true
+      plain-text: true
+      users:
+        alice: alice
+      roles:
+        alice: admin
+  http:
+    auth:
+      permission:
+        custom1:
+          paths: /api/*
+          policy: authenticated
+          auth-mechanism: session
+        custom2:
+          paths: /*
+          policy: permit
+          auth-mechanism: basic
+
+  datasource:
+    db-kind: postgresql
+    jdbc:
+      max-size: 16
+
+  hibernate-orm:
+    dialect: "org.hibernate.dialect.PostgreSQLDialect"
+    database:
+      generation: drop-and-create
+    log:
+      sql: true
+      format-sql: true
+      highlight-sql: true

@@ -14,6 +14,8 @@ import io.smallrye.mutiny.Uni;
 import io.vertx.ext.web.RoutingContext;
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.util.Collections;
+import java.util.Set;
 import java.util.logging.Logger;
 
 @ApplicationScoped
@@ -42,6 +44,16 @@ public class CustomAuthMechanism implements HttpAuthenticationMechanism {
 
     @Override
     public Uni<HttpCredentialTransport> getCredentialTransport(RoutingContext context) {
-        return Uni.createFrom().item(new HttpCredentialTransport(HttpCredentialTransport.Type.AUTHORIZATION, "123", "TOKEN"));
+        return Uni.createFrom().item(new HttpCredentialTransport(HttpCredentialTransport.Type.AUTHORIZATION, "session"));
+    }
+
+    @Override
+    public Set<Class<? extends AuthenticationRequest>> getCredentialTypes() {
+        return Collections.singleton(TokenAuthenticationRequest.class);
+    }
+
+    @Override
+    public Uni<Boolean> sendChallenge(RoutingContext context) {
+        return HttpAuthenticationMechanism.super.sendChallenge(context);
     }
 }

@@ -27,7 +27,8 @@ public class IdentifyProviderVaadin implements IdentityProvider<TokenAuthenticat
             QuarkusPrincipal principal = new QuarkusPrincipal("juandi");
             QuarkusSecurityIdentity.Builder securityIdentityBuilder = QuarkusSecurityIdentity.builder()
                     .setPrincipal(principal)
-                    .addCredential(request.getToken());
+                    .addCredential(request.getToken())
+                    .addRole("ADMIN");
 
             RoutingContext routingContext = HttpSecurityUtils.getRoutingContextAttribute(request);
             if (routingContext != null) {
