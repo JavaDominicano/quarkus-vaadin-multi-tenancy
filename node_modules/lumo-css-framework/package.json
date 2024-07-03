@@ -1,0 +1,11 @@
+{
+  "name": "lumo-css-framework",
+  "version": "4.0.10",
+  "description": "CSS framework for building web apps using Vaadin's Lumo theme",
+  "keywords": [
+    "vaadin",
+    "lumo"
+  ],
+  "author": "Joacim Päivärinne",
+  "license": "Apache-2.0"
+}

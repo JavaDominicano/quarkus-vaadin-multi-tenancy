@@ -8,22 +8,31 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.jconfdominicana.model.User;
 import org.jconfdominicana.repositories.users.UserRepository;
+import org.jconfdominicana.security.vaadin.Role;
+
+import java.util.List;
 
 @ApplicationScoped
 public class ApplicationStartup {
 
-    @Inject
-    UserRepository userRepository;
-
-    @Transactional
-    public void start(@Observes StartupEvent startupEvent) {
-        String passwordHash = BcryptUtil.bcryptHash("admin");
-
-        User user = User.builder()
-                .username("admin")
-                .password(passwordHash)
-                .role("admin")
-                .build();
-        userRepository.insert(user);
-    }
+//    @Inject
+//    UserRepository userRepository;
+//
+//    @Transactional
+//    public void start(@Observes StartupEvent startupEvent) {
+//
+//        User admin = User.builder()
+//                .username("admin")
+//                .password(BcryptUtil.bcryptHash("admin"))
+//                .role(Role.ADMIN.name())
+//                .build();
+//
+//        User user = User.builder()
+//                .username("user")
+//                .password(BcryptUtil.bcryptHash("user"))
+//                .role(Role.USER.name())
+//                .build();
+//
+//        userRepository.insertAll(List.of(admin, user));
+//    }
 }
