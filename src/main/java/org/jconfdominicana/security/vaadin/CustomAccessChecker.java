@@ -6,7 +6,7 @@ import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.AllArgsConstructor;
-import org.jconfdominicana.model.User;
+import org.jconfdominicana.model.Profile;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -29,10 +29,14 @@ public class CustomAccessChecker extends AccessAnnotationChecker {
 
         if (securedClass.isAnnotationPresent(RolesAllowed.class)) {
             RolesAllowed rolesAllowed = securedClass.getAnnotation(RolesAllowed.class);
-            Optional<User> authenticationUser = securityService.getAuthenticationUser();
-            if (authenticationUser.isPresent()) {
-                String role = authenticationUser.get().getRole();
-                return Arrays.asList(rolesAllowed.value()).contains(role);
+
+            Optional<Profile> profile = securityService.getProfile();
+
+            if (profile.isPresent()) {
+
+                Role role = profile.get().getRol();
+
+                return Arrays.asList(rolesAllowed.value()).contains(role.name());
             }
         }
 

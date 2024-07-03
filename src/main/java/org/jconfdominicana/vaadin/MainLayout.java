@@ -10,14 +10,16 @@ import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import org.jconfdominicana.model.User;
+import org.jconfdominicana.config.TenantContext;
+import org.jconfdominicana.model.Profile;
 import org.jconfdominicana.security.vaadin.SecurityService;
 import org.vaadin.lineawesome.LineAwesomeIcon;
-//import org.vaadin.lineawesome.LineAwesomeIcon;
 
 import java.io.ByteArrayInputStream;
 import java.util.Optional;
@@ -25,7 +27,7 @@ import java.util.Optional;
 /**
  * The main view is a top-level placeholder for other views.
  */
-public class MainLayout extends AppLayout {
+public class MainLayout extends AppLayout implements BeforeEnterObserver {
 
     private H1 viewTitle;
 
@@ -83,11 +85,11 @@ public class MainLayout extends AppLayout {
     private Footer createFooter() {
         Footer layout = new Footer();
 
-        Optional<User> maybeUser = securityService.getAuthenticationUser();
+        Optional<Profile> maybeUser = securityService.getProfile();
         if (maybeUser.isPresent()) {
-            User user = maybeUser.get();
+            Profile profile = maybeUser.get();
 
-            Avatar avatar = new Avatar(user.getUsername());
+            Avatar avatar = new Avatar(profile.getUsername());
             StreamResource resource = new StreamResource("profile-pic",
                     () -> new ByteArrayInputStream(new byte[]{}));
             avatar.setImageResource(resource);
@@ -100,15 +102,13 @@ public class MainLayout extends AppLayout {
             MenuItem userName = userMenu.addItem("");
             Div div = new Div();
             div.add(avatar);
-            div.add(user.getUsername());
+            div.add(profile.getUsername());
             div.add(new Icon("lumo", "dropdown"));
             div.getElement().getStyle().set("display", "flex");
             div.getElement().getStyle().set("align-items", "center");
             div.getElement().getStyle().set("gap", "var(--lumo-space-s)");
             userName.add(div);
-            userName.getSubMenu().addItem("Sign out", e -> {
-                securityService.logout();
-            });
+            userName.getSubMenu().addItem("Sign out", e -> securityService.logout());
 
             layout.add(userMenu);
         } else {
@@ -117,6 +117,13 @@ public class MainLayout extends AppLayout {
         }
 
         return layout;
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        if (TenantContext.getCurrentTenant() == null || TenantContext.getCurrentTenant().isEmpty()) {
+            event.forwardTo("");
+        }
     }
 
     @Override

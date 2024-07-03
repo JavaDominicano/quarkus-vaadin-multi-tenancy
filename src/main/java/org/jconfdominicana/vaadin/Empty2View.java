@@ -10,7 +10,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
 import jakarta.annotation.security.RolesAllowed;
 
 @PageTitle("Empty")
-@Route(value = "empty", layout = MainLayout.class)
+@Route(value = "empty2", layout = MainLayout.class)
 @RolesAllowed({"USER", "ADMIN"})
 public class Empty2View extends VerticalLayout {
 

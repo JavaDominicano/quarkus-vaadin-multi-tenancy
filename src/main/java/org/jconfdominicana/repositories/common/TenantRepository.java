@@ -1,4 +1,4 @@
-package org.jconfdominicana.repositories.tenants;
+package org.jconfdominicana.repositories.common;
 
 //import jakarta.data.repository.CrudRepository;
 //import jakarta.data.repository.Repository;

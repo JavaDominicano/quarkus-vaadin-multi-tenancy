@@ -12,11 +12,10 @@ import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
 import jakarta.annotation.security.PermitAll;
 import org.jconfdominicana.config.TenantContext;
-import org.jconfdominicana.model.User;
+import org.jconfdominicana.model.Profile;
 
 @PageTitle("Empty")
-@Route(value = "", layout = MainLayout.class)
-@RouteAlias(value = "", layout = MainLayout.class)
+@Route(value = "empty", layout = MainLayout.class)
 @PermitAll
 public class EmptyView extends VerticalLayout {
 
@@ -34,8 +33,8 @@ public class EmptyView extends VerticalLayout {
 
         Button action = new Button("Action");
         action.addClickListener(event -> {
-            User currentUser = VaadinSession.getCurrent().getAttribute(User.class);
-            System.out.println(currentUser.toString());
+            Profile currentProfile = VaadinSession.getCurrent().getAttribute(Profile.class);
+            System.out.println(currentProfile.toString());
             System.out.println(TenantContext.getCurrentTenant());
         });
 

@@ -1,7 +1,8 @@
 vaadin:
-#  whitelisted-packages: com.vaadin,org.vaadin,org.jconfdominicana
-#  # Launch the default browser when starting the application in development mode
+  #  whitelisted-packages: com.vaadin,org.vaadin,org.jconfdominicana
+  #  # Launch the default browser when starting the application in development mode
   launch-browser: true
+
 
 quarkus:
   security:
@@ -30,20 +31,12 @@ quarkus:
       #          auth-mechanism: basic
       proactive: true
 
-  flyway:
-    schemas: public
-    locations: db/migration/base
-    migrate-at-start: true
-    baseline-on-migrate: true
-
-
-
   datasource:
     db-kind: postgresql
     #    username: postgres
     #    password: postgres
     #    jdbc:
-    #      url: jdbc:postgresql://localhost:5432/jconf
+    #      url: jdbc:postgresql://localhost:5433/jconf
     max-size: 16
     devservices:
       port: 5433
@@ -51,9 +44,7 @@ quarkus:
       username: postgres
       password: postgres
   hibernate-orm:
-    metrics: false
-    #    validate-in-dev-mode: false
-    #    multitenant: schema
+    multitenant: schema
     dialect: "org.hibernate.dialect.PostgreSQLDialect"
     database:
       generation: none #drop-and-create
@@ -61,5 +52,10 @@ quarkus:
       sql: false
       format-sql: true
       highlight-sql: true
-#    database:
-#      default-schema: public
+  #    database:
+  #      default-schema: public
+
+#Varaible Formatter.
+config:
+  flyway:
+    migrate-at-start: false

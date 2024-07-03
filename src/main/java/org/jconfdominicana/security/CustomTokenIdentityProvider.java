@@ -8,8 +8,8 @@ import io.quarkus.vertx.http.runtime.security.HttpSecurityUtils;
 import io.vertx.ext.web.RoutingContext;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.AllArgsConstructor;
-import org.jconfdominicana.model.User;
-import org.jconfdominicana.repositories.users.UserRepository;
+import org.jconfdominicana.model.common.User;
+import org.jconfdominicana.repositories.common.UserRepository;
 
 import java.util.Set;
 

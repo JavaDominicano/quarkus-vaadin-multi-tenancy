@@ -1,5 +1,8 @@
 package org.jconfdominicana.config;
 
+import com.vaadin.flow.server.VaadinSession;
+import org.jconfdominicana.model.common.Tenant;
+
 /**
  * @author me@fredpena.dev
  * @created 02/07/2024  - 23:16
@@ -13,6 +16,13 @@ public final class TenantContext {
 
 
     public static String getCurrentTenant() {
+        if (VaadinSession.getCurrent() != null) {
+            Tenant tenant = VaadinSession.getCurrent().getAttribute(Tenant.class);
+            if (tenant != null && tenant.getTenantId() != null && !tenant.getTenantId().isEmpty()) {
+                return tenant.getTenantId();
+            }
+        }
+
         return currentTenant.get();
     }
 
