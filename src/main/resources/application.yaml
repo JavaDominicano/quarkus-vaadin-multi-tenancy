@@ -1,7 +1,7 @@
-vaadin:
-  whitelisted-packages: com.vaadin,org.vaadin,org.jconfdominicana
-  # Launch the default browser when starting the application in development mode
-  launch-browser: true
+#vaadin:
+#  whitelisted-packages: com.vaadin,org.vaadin,org.jconfdominicana
+#  # Launch the default browser when starting the application in development mode
+#  launch-browser: true
 
 quarkus:
   security:
@@ -46,12 +46,10 @@ quarkus:
     #      url: jdbc:postgresql://localhost:5432/jconf
     max-size: 16
     devservices:
-      port: 5432
+      port: 5433
       db-name: jconf
       username: postgres
       password: postgres
-  #    services: false
-
   hibernate-orm:
     metrics: false
     #    validate-in-dev-mode: false
