@@ -16,6 +16,7 @@ import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import org.jconfdominicana.model.User;
 import org.jconfdominicana.security.vaadin.SecurityService;
+import org.vaadin.lineawesome.LineAwesomeIcon;
 //import org.vaadin.lineawesome.LineAwesomeIcon;
 
 import java.io.ByteArrayInputStream;
@@ -64,11 +65,11 @@ public class MainLayout extends AppLayout {
         SideNav nav = new SideNav();
 
         if (accessChecker.hasAccess(EmptyView.class)) {
-            nav.addItem(new SideNavItem("Empty", EmptyView.class));
+            nav.addItem(new SideNavItem("Empty", EmptyView.class, LineAwesomeIcon.FILE.create()));
         }
 
         if (accessChecker.hasAccess(Empty2View.class)) {
-            nav.addItem(new SideNavItem("Empty 2", Empty2View.class));
+            nav.addItem(new SideNavItem("Empty 2", Empty2View.class, LineAwesomeIcon.FILE.create()));
         }
 //        if (accessChecker.hasAccess(MasterDetailView.class)) {
 //            nav.addItem(
