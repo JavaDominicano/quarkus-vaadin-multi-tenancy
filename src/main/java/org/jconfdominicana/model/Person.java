@@ -26,10 +26,12 @@ public class Person implements Serializable {
 
     @NotNull
     @Size(min = 1, max = 50)
+    @Column(name = "first_name")
     private String firstName;
 
     @NotNull
     @Size(min = 1, max = 50)
+    @Column(name = "last_name")
     private String lastName;
 
     @Email
@@ -42,6 +44,7 @@ public class Person implements Serializable {
     private String phone;
 
     @NotNull
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
     @NotNull

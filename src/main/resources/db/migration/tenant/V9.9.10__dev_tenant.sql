@@ -1,0 +1,1 @@
+INSERT INTO profile(username, "name", rol) VALUES ('admin', 'admin', 'ADMIN');

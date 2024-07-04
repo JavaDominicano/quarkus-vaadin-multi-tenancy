@@ -9,6 +9,7 @@ quarkus:
     events:
       enabled: true
   http:
+    host: 0.0.0.0
     auth:
       form:
         enabled: true
@@ -29,8 +30,6 @@ quarkus:
       #          paths: ["/VAADIN/*", "/favicon.ico", "/robots.txt", "/manifest.webmanifest", "/sw.js", "/offline.html", "/icons/*", "/images/*", "/styles/*", "/h2-console/*", "/q/*"]
       #          policy: permit
       #          auth-mechanism: basic
-      proactive: true
-
   datasource:
     db-kind: postgresql
     #    username: postgres
@@ -48,12 +47,11 @@ quarkus:
     dialect: "org.hibernate.dialect.PostgreSQLDialect"
     database:
       generation: none #drop-and-create
+#      default-schema: public
     log:
       sql: false
-      format-sql: true
+      format-sql: false
       highlight-sql: true
-  #    database:
-  #      default-schema: public
 
 #Varaible Formatter.
 config:
