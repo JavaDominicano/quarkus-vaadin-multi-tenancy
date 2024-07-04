@@ -39,8 +39,7 @@ public class FlywayService {
                 .locations("classpath:db/migration/common")
                 .target(MigrationVersion.LATEST)
                 .baselineOnMigrate(true)
-                .schemas("public")
-//                .schemas(CurrentTenantResolver.DEFAULT)
+                .schemas(CurrentTenantResolver.DEFAULT)
                 .load();
 
         tenantDbMigration.migrate();

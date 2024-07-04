@@ -3,8 +3,13 @@ vaadin:
   #  # Launch the default browser when starting the application in development mode
   launch-browser: true
 
-
 quarkus:
+  log:
+    category:
+      "org.atmosphere":
+        level: "OFF"
+#    level: TRACE
+
   security:
     events:
       enabled: true
@@ -47,11 +52,12 @@ quarkus:
     dialect: "org.hibernate.dialect.PostgreSQLDialect"
     database:
       generation: none #drop-and-create
-#      default-schema: public
+    #      default-schema: public
     log:
       sql: false
       format-sql: false
       highlight-sql: true
+
 
 #Varaible Formatter.
 config:

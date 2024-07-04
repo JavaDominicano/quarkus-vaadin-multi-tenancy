@@ -33,9 +33,9 @@ public class EmptyView extends VerticalLayout {
 
         Button action = new Button("Action");
         action.addClickListener(event -> {
-            Profile currentProfile = VaadinSession.getCurrent().getAttribute(Profile.class);
-            System.out.println(currentProfile.toString());
-            System.out.println(TenantContext.getCurrentTenant());
+//            Profile currentProfile = VaadinSession.getCurrent().getAttribute(Profile.class);
+//            System.out.println(currentProfile.toString());
+//            System.out.println(TenantContext.getCurrentTenant());
         });
 
         add(action);

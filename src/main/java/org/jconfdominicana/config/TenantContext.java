@@ -1,6 +1,9 @@
 package org.jconfdominicana.config;
 
 import com.vaadin.flow.server.VaadinSession;
+import io.quarkus.security.identity.CurrentIdentityAssociation;
+import io.quarkus.security.runtime.SecurityIdentityAssociation;
+import jakarta.enterprise.inject.spi.CDI;
 import org.jconfdominicana.model.common.Tenant;
 
 /**
@@ -9,19 +12,22 @@ import org.jconfdominicana.model.common.Tenant;
  */
 public final class TenantContext {
 
-    private TenantContext() {
-    }
+//    private CurrentIdentityAssociation cia;
 
     private static final ThreadLocal<String> currentTenant = new ThreadLocal<>();
 
 
     public static String getCurrentTenant() {
-        if (VaadinSession.getCurrent() != null) {
-            Tenant tenant = VaadinSession.getCurrent().getAttribute(Tenant.class);
-            if (tenant != null && tenant.getTenantId() != null && !tenant.getTenantId().isEmpty()) {
-                return tenant.getTenantId();
-            }
-        }
+////        System.out.println(Arc.container().bean(SecurityIdentityAssociation.class.getName()));
+////        System.out.println(bean);
+//        System.out.println(CDI.current().select(CurrentIdentityAssociation.class).get().getIdentity().getPrincipal().getName());
+//        System.out.println("VaadinSession.getCurrent(): " + VaadinSession.getCurrent());
+//        if (VaadinSession.getCurrent() != null) {
+//            Tenant tenant = VaadinSession.getCurrent().getAttribute(Tenant.class);
+//            if (tenant != null && tenant.getTenantId() != null && !tenant.getTenantId().isEmpty()) {
+//                return tenant.getTenantId();
+//            }
+//        }
 
         return currentTenant.get();
     }
