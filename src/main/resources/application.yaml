@@ -5,23 +5,27 @@ vaadin:
 
 quarkus:
   log:
+    level: INFO
     category:
+      "org.hibernate":
+        level: "OFF"
       "org.atmosphere":
         level: "OFF"
-#    level: TRACE
-
-  security:
-    events:
-      enabled: true
+      "io.quarkus.hibernate.orm":
+        level: TRACE
+      "org.jconfdominicana":
+        level: INFO
+      "io.quarkus.vertx.http":
+        level: TRACE
   http:
     host: 0.0.0.0
     auth:
-      form:
-        enabled: true
-        landing-page: /
-        error-page: login?error
-        username-parameter: username
-        password-parameter: password
+#      form:
+#        enabled: false
+#        landing-page: /
+#        error-page: login?error
+#        username-parameter: username
+#        password-parameter: password
       permission:
         custom1:
           paths: /api/*
@@ -30,11 +34,12 @@ quarkus:
         custom2:
           paths: /*
           policy: permit
-          auth-mechanism: form
+          auth-mechanism: form-custom
       #        vaadin:
       #          paths: ["/VAADIN/*", "/favicon.ico", "/robots.txt", "/manifest.webmanifest", "/sw.js", "/offline.html", "/icons/*", "/images/*", "/styles/*", "/h2-console/*", "/q/*"]
       #          policy: permit
       #          auth-mechanism: basic
+      proactive: true
   datasource:
     db-kind: postgresql
     #    username: postgres
