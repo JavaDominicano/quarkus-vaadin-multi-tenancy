@@ -13,6 +13,7 @@ import io.quarkus.security.identity.request.UsernamePasswordAuthenticationReques
 import io.quarkus.vertx.http.runtime.security.*;
 import io.smallrye.mutiny.Uni;
 import io.vertx.ext.web.RoutingContext;
+import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.AllArgsConstructor;
 
@@ -21,6 +22,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 @ApplicationScoped
+@Priority(1)
 public class CustomAuthMechanism implements HttpAuthenticationMechanism {
 
     private static final String SCHEME = "Bearer";
