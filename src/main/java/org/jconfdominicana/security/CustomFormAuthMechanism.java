@@ -21,6 +21,7 @@ import io.vertx.ext.web.RoutingContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
+import org.jconfdominicana.config.TenantContext;
 import org.jconfdominicana.model.common.Tenant;
 import org.jconfdominicana.security.vaadin.CacheService;
 
@@ -81,6 +82,7 @@ public class CustomFormAuthMechanism implements HttpAuthenticationMechanism {
                 context.put(HttpAuthenticationMechanism.class.getName(), this);
                 String principal = result.getPrincipal();
                 System.out.println(principal);
+                System.out.println(TenantContext.getCurrentTenant());
                 Uni<SecurityIdentity> ret = identityProviderManager
                         .authenticate(HttpSecurityUtils
                                 .setRoutingContextAttribute(new TrustedAuthenticationRequest(principal), context));

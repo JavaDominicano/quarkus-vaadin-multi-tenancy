@@ -18,16 +18,12 @@ public final class TenantContext {
 
 
     public static String getCurrentTenant() {
-////        System.out.println(Arc.container().bean(SecurityIdentityAssociation.class.getName()));
-////        System.out.println(bean);
-//        System.out.println(CDI.current().select(CurrentIdentityAssociation.class).get().getIdentity().getPrincipal().getName());
-//        System.out.println("VaadinSession.getCurrent(): " + VaadinSession.getCurrent());
-//        if (VaadinSession.getCurrent() != null) {
-//            Tenant tenant = VaadinSession.getCurrent().getAttribute(Tenant.class);
-//            if (tenant != null && tenant.getTenantId() != null && !tenant.getTenantId().isEmpty()) {
-//                return tenant.getTenantId();
-//            }
-//        }
+        if (VaadinSession.getCurrent() != null) {
+            Tenant tenant = VaadinSession.getCurrent().getAttribute(Tenant.class);
+            if (tenant != null && tenant.getTenantId() != null && !tenant.getTenantId().isEmpty()) {
+                return tenant.getTenantId();
+            }
+        }
 
         return currentTenant.get();
     }
