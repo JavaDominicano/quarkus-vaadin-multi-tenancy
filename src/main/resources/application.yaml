@@ -15,8 +15,8 @@ quarkus:
         level: TRACE
       "org.jconfdominicana":
         level: INFO
-      "io.quarkus.vertx.http":
-        level: TRACE
+#      "io.quarkus.vertx.http":
+#        level: TRACE
   http:
     host: 0.0.0.0
     auth:

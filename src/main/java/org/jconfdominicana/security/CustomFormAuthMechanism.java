@@ -2,6 +2,7 @@ package org.jconfdominicana.security;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.quarkus.security.AuthenticationCompletionException;
 import io.quarkus.security.credential.PasswordCredential;
 import io.quarkus.security.identity.IdentityProviderManager;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -9,49 +10,84 @@ import io.quarkus.security.identity.request.AuthenticationRequest;
 import io.quarkus.security.identity.request.TokenAuthenticationRequest;
 import io.quarkus.security.identity.request.TrustedAuthenticationRequest;
 import io.quarkus.security.identity.request.UsernamePasswordAuthenticationRequest;
-import io.quarkus.vertx.http.runtime.security.ChallengeData;
-import io.quarkus.vertx.http.runtime.security.HttpAuthenticationMechanism;
-import io.quarkus.vertx.http.runtime.security.HttpCredentialTransport;
-import io.quarkus.vertx.http.runtime.security.HttpSecurityUtils;
+import io.quarkus.vertx.http.runtime.security.*;
 import io.smallrye.mutiny.Uni;
-import io.smallrye.mutiny.subscription.UniEmitter;
-import io.vertx.core.Handler;
+
 import io.vertx.core.MultiMap;
+import io.vertx.core.http.Cookie;
+import io.vertx.core.http.CookieSameSite;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.RoutingContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
+import org.jconfdominicana.model.common.Tenant;
+import org.jconfdominicana.security.vaadin.CacheService;
 
+import java.net.URI;
+import java.security.SecureRandom;
+import java.time.Duration;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.logging.Logger;
+import java.util.concurrent.ExecutionException;
+
 
 @ApplicationScoped
 @Priority(2)
 @Slf4j
 public class CustomFormAuthMechanism implements HttpAuthenticationMechanism {
 
+    private static final String LOCATION_PAGE = "/";
+    private static final String LOCATION_COOKIE = "quarkus-location-cookie";
+    private static final String COOKIE_NAME = "vaadin-auth-credential";
     private static final String SCHEME = "form-custom";
+    private static final String ERROR_PAGE = "login?error";
+    private static final String POST_ACTION_PAGE = "/j_security_check";
+
+    private final CookieSameSite cookieSameSite;
+    private final PersistentLoginManager loginManager;
+    private final CacheService cacheService;
+
+    static volatile String encryptedKey;
+
+    public CustomFormAuthMechanism(CacheService cacheService) {
+        String key;
+        this.cacheService = cacheService;
+        this.cookieSameSite = CookieSameSite.STRICT;
+        if (encryptedKey != null) {
+            key = encryptedKey;
+        } else {
+            byte[] data = new byte[32];
+            new SecureRandom().nextBytes(data);
+            key = encryptedKey = Base64.getEncoder().encodeToString(data);
+        }
+        this.loginManager = new PersistentLoginManager(key, COOKIE_NAME, Duration.ofMinutes(30).toMillis(), Duration.ofMinutes(1).toMillis(), false, CookieSameSite.STRICT.name(), "/");
+    }
 
 
     @Override
     public Uni<SecurityIdentity> authenticate(RoutingContext context,
                                               IdentityProviderManager identityProviderManager) {
         log.info("Acessing from form auth");
-        if (context.normalizedPath().endsWith("/j_security_check") && context.request().method().equals(HttpMethod.POST)) {
-            System.out.println("entro aqui");
+        if (context.normalizedPath().endsWith(POST_ACTION_PAGE) && context.request().method().equals(HttpMethod.POST)) {
             //we always re-auth if it is a post to the auth URL
             context.put(HttpAuthenticationMechanism.class.getName(), this);
             return this.formAuth(context, identityProviderManager);
         } else {
-            context.put(HttpAuthenticationMechanism.class.getName(), this);
-//                Uni<SecurityIdentity> ret = identityProviderManager
-//                        .authenticate(HttpSecurityUtils
-//                                .setRoutingContextAttribute(new UsernamePasswordAuthenticationRequest("", new PasswordCredential("".toCharArray())), context));
-//                return ret.onItem().invoke(securityIdentity -> {});
+            PersistentLoginManager.RestoreResult result = loginManager.restore(context);
+            if (result != null) {
+                context.put(HttpAuthenticationMechanism.class.getName(), this);
+                String principal = result.getPrincipal();
+                System.out.println(principal);
+                Uni<SecurityIdentity> ret = identityProviderManager
+                        .authenticate(HttpSecurityUtils
+                                .setRoutingContextAttribute(new TrustedAuthenticationRequest(principal), context));
+                return ret.onItem().invoke(securityIdentity -> {
+                    this.loginManager.save(securityIdentity, context, result, false);
+                });
+            }
             return Uni.createFrom().optional(Optional.empty());
         }
     }
@@ -71,24 +107,57 @@ public class CustomFormAuthMechanism implements HttpAuthenticationMechanism {
                         return;
                     }
                     securityContext
-                            .authenticate(HttpSecurityUtils
-                                    .setRoutingContextAttribute(new UsernamePasswordAuthenticationRequest(jUsername,
-                                            new PasswordCredential(jPassword.toCharArray())), exchange))
-                            .subscribe().with(identity -> {
+                            .authenticate(HttpSecurityUtils.setRoutingContextAttribute(new UsernamePasswordAuthenticationRequest(jUsername, new PasswordCredential(jPassword.toCharArray())), exchange))
+                            .subscribe()
+                            .with(identity -> {
                                 try {
-                                    exchange.response().setStatusCode(200);
-                                    exchange.response().end();
+                                    this.loginManager.save(identity, exchange, null, false);
+                                    if (LOCATION_PAGE != null || exchange.request().getCookie(LOCATION_COOKIE) != null) {
+                                        handleRedirectBack(exchange);
+                                    } else {
+                                        exchange.response().setStatusCode(200);
+                                        exchange.response().end();
+                                    }
                                     uniEmitter.complete(null);
                                 } catch (Throwable t) {
                                     uniEmitter.fail(t);
                                 }
-                            }, throwable -> uniEmitter.fail(throwable));
+                            }, uniEmitter::fail);
                 } catch (Throwable t) {
                     uniEmitter.fail(t);
                 }
             });
             exchange.request().resume();
         });
+    }
+
+    protected void handleRedirectBack(final RoutingContext exchange) {
+        Cookie redirect = exchange.request().getCookie(LOCATION_COOKIE);
+        String location;
+        if (redirect != null) {
+            verifyRedirectBackLocation(exchange.request().absoluteURI(), redirect.getValue());
+            redirect.setSecure(exchange.request().isSSL());
+            redirect.setSameSite(cookieSameSite);
+            location = redirect.getValue();
+            exchange.response().addCookie(redirect.setMaxAge(0));
+        } else {
+            location = exchange.request().scheme() + "://" + exchange.request().authority() + LOCATION_PAGE;
+        }
+        exchange.response().setStatusCode(302);
+        exchange.response().headers().add(HttpHeaderNames.LOCATION, location);
+        exchange.response().end();
+    }
+
+    protected void verifyRedirectBackLocation(String requestURIString, String redirectUriString) {
+        URI requestUri = URI.create(requestURIString);
+        URI redirectUri = URI.create(redirectUriString);
+        if (!requestUri.getAuthority().equals(redirectUri.getAuthority())
+                || !requestUri.getScheme().equals(redirectUri.getScheme())) {
+            log.error("Location cookie value {} does not match the current request URI {}'s scheme, host or port",
+                    redirectUriString,
+                    requestURIString);
+            throw new AuthenticationCompletionException();
+        }
     }
 
     static Uni<ChallengeData> getRedirect(final RoutingContext context, final String location) {
@@ -98,17 +167,11 @@ public class CustomFormAuthMechanism implements HttpAuthenticationMechanism {
 
     @Override
     public Uni<ChallengeData> getChallenge(RoutingContext context) {
-        if (context.normalizedPath().endsWith("/j_security_check") && context.request().method().equals(HttpMethod.POST)) {
-            return getRedirect(context, "login?error");
+        if (context.normalizedPath().endsWith(POST_ACTION_PAGE) && context.request().method().equals(HttpMethod.POST)) {
+            return getRedirect(context, ERROR_PAGE);
         } else {
-            ChallengeData res = new ChallengeData(
-                    HttpResponseStatus.UNAUTHORIZED.code(),
-                    null,
-                    null
-            );
-            return Uni.createFrom().item(res);
+            return getRedirect(context, LOCATION_PAGE);
         }
-//
     }
 
     @Override

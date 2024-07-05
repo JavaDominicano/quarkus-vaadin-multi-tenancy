@@ -31,7 +31,7 @@ public class SecurityService {
     public Optional<String> getUsername() {
         String username = sia.getIdentity().getPrincipal().getName();
 
-        System.out.println("SecurityService: "+username);
+        log.info("SecurityService: " + username);
 
         if (username == null || username.isEmpty()) {
             return Optional.empty();
