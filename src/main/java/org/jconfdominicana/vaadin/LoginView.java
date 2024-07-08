@@ -16,6 +16,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.inject.Inject;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jconfdominicana.security.vaadin.SecurityService;
 import org.jconfdominicana.utlis.NotificationUtils;
 
@@ -29,13 +30,16 @@ public class LoginView extends LoginOverlay implements BeforeEnterObserver {
 
     private final Anchor anchor = new Anchor();
 
-    private final transient String version = "1.0.0";
     @Inject
     SecurityService securityService;
     @Inject
     NotificationUtils notification;
 
-    public LoginView() {
+    public LoginView(
+            @ConfigProperty(name = "quarkus.application.version", defaultValue = "unknown") String version,
+            @ConfigProperty(name = "application.label.copyright", defaultValue = "unknown") String copyright,
+            @ConfigProperty(name = "application.label.contact", defaultValue = "unknown") String contact
+    ) {
         setAction("/j_security_check");
 
         LoginI18n i18n = LoginI18n.createDefault();
@@ -61,11 +65,11 @@ public class LoginView extends LoginOverlay implements BeforeEnterObserver {
         anchor.setText("Sign Up");
 
         Span copyrightLabel = new Span();
-        copyrightLabel.setText("© %s JConf Dom LLC. All rights reserved.".formatted(LocalDate.now().getYear()));
+        copyrightLabel.setText(copyright.formatted(LocalDate.now().getYear()));
         Span versionLabel = new Span();
         versionLabel.setText("Version: %s".formatted(version));
         Span contactLabel = new Span();
-        contactLabel.setText("Contact us at support@jconfdom.org if you're experiencing issues logging into your account.");
+        contactLabel.setText(contact);
 
         Image img = new Image("icons/icon.png", "Logo");
         img.setWidth("100px");

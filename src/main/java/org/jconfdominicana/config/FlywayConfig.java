@@ -12,7 +12,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class FlywayConfig {
 
-    //    @ConfigProperty(name = "config.flyway.migrate-on-startup")
+    //    @ConfigProperty(name = "application.flyway.migrate-on-startup")
     boolean migrateOnStartup = true;
 
     private final FlywayService flywayService;

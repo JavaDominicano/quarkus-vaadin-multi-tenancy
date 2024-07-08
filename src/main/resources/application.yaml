@@ -62,10 +62,22 @@ quarkus:
     log:
       sql: false
       format-sql: false
-      highlight-sql: true
+      highlight-sql: false
 
 
 #Varaible Formatter.
-config:
+application:
   flyway:
     migrate-at-start: false
+
+  label:
+    copyright: '© %s JConf Dominicana. All rights reserved.'
+    contact: 'Contact us at support@jconfdominicana.org if you`re experiencing issues logging into your account.'
+
+  pattern:
+    password: '^(?=.*[0-9])(?=.*[a-zA-Z]).{5}.*$'
+    username: '^.{4,}$'
+    email: '^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$'
+
+  notification:
+    duration: 3000
