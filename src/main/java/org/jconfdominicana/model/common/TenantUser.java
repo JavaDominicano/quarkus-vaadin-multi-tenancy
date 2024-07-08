@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
+import org.jconfdominicana.config.CurrentTenantResolver;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -14,13 +15,13 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-@Table(name = "tenant_user")
+@Table(name = "tenant_user", schema = CurrentTenantResolver.DEFAULT)
 public class TenantUser implements Serializable {
 
     @EmbeddedId
     private TenantUserKey id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("tenantId")
     @JoinColumn(name = "tenant_id")
     @ToString.Exclude

@@ -15,7 +15,6 @@ import org.jconfdominicana.repositories.ProfileRepository;
 import org.jconfdominicana.repositories.common.UserRepository;
 
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @RequestScoped
@@ -57,63 +56,40 @@ public class SecurityService {
     }
 
     public Optional<Profile> getProfile() {
-        try {
-            String username = sia.getIdentity().getPrincipal().getName();
+        String username = sia.getIdentity().getPrincipal().getName();
 
-            if (username == null || username.isEmpty()) {
-                return Optional.empty();
-            }
-
-            log.info("User: username = = {}", username);
-
-            Tenant tenant = cacheService.getTenant(username);
-            if (tenant != null) {
-                return Optional.empty();
-            }
-
-            Profile currentProfile = cacheService.getProfile(username);
-            if (currentProfile != null) {
-                return Optional.of(currentProfile);
-            }
-
-            Profile profile = profileRepository.findByUsername(username);
-            if (profile == null) {
-                return Optional.empty();
-            }
-            log.info("Profile: username = = {}", profile.getUsername());
-
-            cacheService.putProfile(profile.getUsername(), profile);
-
-            return Optional.of(profile);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        if (username == null || username.isEmpty()) {
+            return Optional.empty();
         }
 
+        log.info("User: username = = {}", username);
 
+        Tenant tenant = cacheService.getTenant(username);
+        if (tenant != null) {
+            return Optional.empty();
+        }
+
+        Profile currentProfile = cacheService.getProfile(username);
+        if (currentProfile == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(currentProfile);
     }
 
     public Optional<Boolean> userHasSomeTenant() {
-        try {
-            String username = sia.getIdentity().getPrincipal().getName();
+        String username = sia.getIdentity().getPrincipal().getName();
 
-            if (username == null || username.isEmpty()) {
-                return Optional.empty();
-            }
-
-            User user = cacheService.getUser(username);
-            return Optional.of(user.getTenants().size() > 1);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        if (username == null || username.isEmpty()) {
+            return Optional.empty();
         }
+
+        User user = cacheService.getUser(username);
+        return Optional.of(user.getTenants().size() > 1);
     }
 
     public void clearSession() {
-//        VaadinSession.getCurrent().setAttribute(Tenant.class, null);
-//        VaadinSession.getCurrent().setAttribute(User.class, null);
+        getUsername().ifPresent(cacheService::clear);
     }
 
 

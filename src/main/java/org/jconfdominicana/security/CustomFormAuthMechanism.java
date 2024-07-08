@@ -1,7 +1,6 @@
 package org.jconfdominicana.security;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import io.quarkus.security.AuthenticationCompletionException;
 import io.quarkus.security.credential.PasswordCredential;
 import io.quarkus.security.identity.IdentityProviderManager;
@@ -12,7 +11,6 @@ import io.quarkus.security.identity.request.TrustedAuthenticationRequest;
 import io.quarkus.security.identity.request.UsernamePasswordAuthenticationRequest;
 import io.quarkus.vertx.http.runtime.security.*;
 import io.smallrye.mutiny.Uni;
-
 import io.vertx.core.MultiMap;
 import io.vertx.core.http.Cookie;
 import io.vertx.core.http.CookieSameSite;
@@ -20,10 +18,9 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.RoutingContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Any;
 import lombok.extern.slf4j.Slf4j;
-import org.jconfdominicana.config.TenantContext;
-import org.jconfdominicana.model.common.Tenant;
-import org.jconfdominicana.security.vaadin.CacheService;
+import org.jconfdominicana.config.CurrentTenantResolver;
 
 import java.net.URI;
 import java.security.SecureRandom;
@@ -32,7 +29,6 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 
 @ApplicationScoped
@@ -49,13 +45,14 @@ public class CustomFormAuthMechanism implements HttpAuthenticationMechanism {
 
     private final CookieSameSite cookieSameSite;
     private final PersistentLoginManager loginManager;
-    private final CacheService cacheService;
+
+    private final CurrentTenantResolver currentTenantResolver;
 
     static volatile String encryptedKey;
 
-    public CustomFormAuthMechanism(CacheService cacheService) {
+    public CustomFormAuthMechanism(@Any CurrentTenantResolver currentTenantResolver) {
         String key;
-        this.cacheService = cacheService;
+        this.currentTenantResolver = currentTenantResolver;
         this.cookieSameSite = CookieSameSite.STRICT;
         if (encryptedKey != null) {
             key = encryptedKey;
@@ -81,11 +78,11 @@ public class CustomFormAuthMechanism implements HttpAuthenticationMechanism {
             if (result != null) {
                 context.put(HttpAuthenticationMechanism.class.getName(), this);
                 String principal = result.getPrincipal();
-                System.out.println(principal);
-                System.out.println(TenantContext.getCurrentTenant());
+                currentTenantResolver.setPrincipal(principal);
                 Uni<SecurityIdentity> ret = identityProviderManager
                         .authenticate(HttpSecurityUtils
                                 .setRoutingContextAttribute(new TrustedAuthenticationRequest(principal), context));
+//                                .setRoutingContextAttribute(new CustomFormAuthenticationRequest(principal), context));
                 return ret.onItem().invoke(securityIdentity -> {
                     this.loginManager.save(securityIdentity, context, result, false);
                 });
@@ -154,7 +151,7 @@ public class CustomFormAuthMechanism implements HttpAuthenticationMechanism {
         URI requestUri = URI.create(requestURIString);
         URI redirectUri = URI.create(redirectUriString);
         if (!requestUri.getAuthority().equals(redirectUri.getAuthority())
-                || !requestUri.getScheme().equals(redirectUri.getScheme())) {
+            || !requestUri.getScheme().equals(redirectUri.getScheme())) {
             log.error("Location cookie value {} does not match the current request URI {}'s scheme, host or port",
                     redirectUriString,
                     requestURIString);

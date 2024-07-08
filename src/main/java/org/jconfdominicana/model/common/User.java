@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
+import org.jconfdominicana.config.CurrentTenantResolver;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -24,7 +25,7 @@ import java.util.Set;
 @UserDefinition
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Table(name = "users", indexes = {@Index(columnList = "username")})
+@Table(name = "users", schema = CurrentTenantResolver.DEFAULT, indexes = {@Index(columnList = "username")})
 public class User implements Serializable {
 
     @Id

@@ -39,9 +39,9 @@ public abstract class AbstractIdentityProvider implements IdentityProvider<Token
         }
     }
 
-    protected boolean requireActiveCDIRequestContext() {
-        return false;
-    }
+        protected boolean requireActiveCDIRequestContext() {
+            return false;
+        }
 
     protected abstract SecurityIdentity authenticate(TokenAuthenticationRequest request);
 }

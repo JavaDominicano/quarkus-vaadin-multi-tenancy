@@ -4,9 +4,8 @@
 --         'me@fredpena.dev', NULL, FALSE, FALSE, FALSE, NULL, 'root', 'root', NOW(), NOW());
 --
 --
--- INSERT INTO person(first_name, last_name, email, phone, date_of_birth, occupation, role, important, created_by,
---                    last_modified_by, created_date, last_modified_date)
--- VALUES ('Jeremy', 'Marilli', 'jeremy.marilli@vesa.pf', '(526) 435-1819', '1983-09-07', 'Chief Projectionist',
+INSERT INTO person(first_name, last_name, email, phone, date_of_birth, occupation, role, important)
+    -- VALUES ('Jeremy', 'Marilli', 'jeremy.marilli@vesa.pf', '(526) 435-1819', '1983-09-07', 'Chief Projectionist',
 --         'External', false, 'root', 'root', NOW(), NOW()),
 --        ('Kathryn', 'Huet', 'kathryn.huet@wupikdoh.by', '(937) 855-5936', '1927-02-24', 'Telecasting Engineer',
 --         'Worker', false, 'root', 'root', NOW(), NOW()),
@@ -36,12 +35,12 @@
 --         'Supervisor', false, 'root', 'root', NOW(), NOW()),
 --        ('Mittie', 'Sardi', 'mittie.sardi@lullip.nf', '(673) 849-4256', '1973-08-04', 'Food Chemist', 'Manager',
 --         false, 'root', 'root', NOW(), NOW()),
---        ('Corey', 'McDaniel', 'corey.mcdaniel@aba.tc', '(268) 208-9643', '2012-10-08',
---         'Advanced Foreign Counterintelligence Specialist (Afcs)', 'Supervisor', false, 'root', 'root', NOW(), NOW()),
---        ('Hester', 'Stein', 'hester.stein@kettujwo.eu', '(873) 489-6641', '1939-08-01', 'Forest Fire Officer',
---         'Manager', false, 'root', 'root', NOW(), NOW()),
---        ('Danny', 'Lowe', 'danny.lowe@ju.sd', '(243) 974-5539', '2013-11-13', 'Catalogue Illustrator', 'External',
---         true, 'root', 'root', NOW(), NOW()),
+VALUES ('Corey', 'McDaniel', 'corey.mcdaniel@aba.tc', '(268) 208-9643', '2012-10-08',
+        'Advanced Foreign Counterintelligence Specialist (Afcs)', 'Supervisor', false),
+       ('Hester', 'Stein', 'hester.stein@kettujwo.eu', '(873) 489-6641', '1939-08-01', 'Forest Fire Officer',
+        'Manager', false),
+       ('Danny', 'Lowe', 'danny.lowe@ju.sd', '(243) 974-5539', '2013-11-13', 'Catalogue Illustrator', 'External',
+        true);
 --        ('Lillie', 'Winter', 'lillie.winter@vioburez.vi', '(816) 699-1291', '1945-10-08', 'Knife Grinder',
 --         'Worker', false, 'root', 'root', NOW(), NOW()),
 --        ('Brandon', 'Borchi', 'brandon.borchi@ig.al', '(319) 401-1090', '2000-07-30', 'Neuropsychiatrist',

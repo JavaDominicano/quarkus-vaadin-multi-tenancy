@@ -15,17 +15,17 @@ quarkus:
         level: TRACE
       "org.jconfdominicana":
         level: INFO
-#      "io.quarkus.vertx.http":
-#        level: TRACE
+  #      "io.quarkus.vertx.http":
+  #        level: TRACE
   http:
     host: 0.0.0.0
     auth:
-#      form:
-#        enabled: false
-#        landing-page: /
-#        error-page: login?error
-#        username-parameter: username
-#        password-parameter: password
+      #      form:
+      #        enabled: false
+      #        landing-page: /
+      #        error-page: login?error
+      #        username-parameter: username
+      #        password-parameter: password
       permission:
         custom1:
           paths: /api/*
@@ -40,6 +40,7 @@ quarkus:
       #          policy: permit
       #          auth-mechanism: basic
       proactive: true
+    port: 8080
   datasource:
     db-kind: postgresql
     #    username: postgres

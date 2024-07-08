@@ -3,14 +3,13 @@
 -- VALUES ('f.pena', '$2a$10$8c76Jfm15Ib7IOVh7l1DJOKtKUxeHvSlE/oj39W3uKbNyS3oK7BbK', 'Freddy Peña',
 --         'me@fredpena.dev', NULL, FALSE, FALSE, FALSE, NULL, 'root', 'root', NOW(), NOW());
 --
--- INSERT INTO person(first_name, last_name, email, phone, date_of_birth, occupation, role, important, created_by,
---                    last_modified_by, created_date, last_modified_date)
--- VALUES ('Jean', 'Rhodes', 'jean.rhodes@wehovuce.gu', '(777) 435-9570', '1948-12-20', 'Clinical Psychiatrist',
---         'Worker', false, 'root', 'root', NOW(), NOW()),
---        ('Jack', 'Romoli', 'jack.romoli@zamum.bw', '(517) 393-9630', '1974-10-16', 'Mortician Investigator',
---         'Supervisor', false, 'root', 'root', NOW(), NOW()),
---        ('Pearl', 'Holden', 'pearl.holden@dunebuh.cr', '(711) 904-3669', '1949-02-10', 'Rod Buster Helper',
---         'Manager', true, 'root', 'root', NOW(), NOW()),
+INSERT INTO person(first_name, last_name, email, phone, date_of_birth, occupation, role, important)
+VALUES ('Jean', 'Rhodes', 'jean.rhodes@wehovuce.gu', '(777) 435-9570', '1948-12-20', 'Clinical Psychiatrist',
+        'Worker', false),
+       ('Jack', 'Romoli', 'jack.romoli@zamum.bw', '(517) 393-9630', '1974-10-16', 'Mortician Investigator',
+        'Supervisor', false),
+       ('Pearl', 'Holden', 'pearl.holden@dunebuh.cr', '(711) 904-3669', '1949-02-10', 'Rod Buster Helper',
+        'Manager', true);
 --        ('Belle', 'Montero', 'belle.montero@repiwid.si', '(935) 404-4792', '1932-03-05', 'Classroom Aide',
 --         'External', false, 'root', 'root', NOW(), NOW()),
 --        ('Olive', 'Molina', 'olive.molina@razuppa.ga', '(935) 267-8492', '1933-09-15',

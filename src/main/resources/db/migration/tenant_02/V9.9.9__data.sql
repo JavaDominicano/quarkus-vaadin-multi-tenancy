@@ -4,9 +4,8 @@
 --         'm.perez@fredpena.dev', NULL, FALSE, FALSE, FALSE, NULL, 'root', 'root', NOW(), NOW());
 --
 --
--- INSERT INTO person(first_name, last_name, email, phone, date_of_birth, occupation, role, important, created_by,
---                    last_modified_by, created_date, last_modified_date)
--- VALUES ('Eula', 'Lane', 'eula.lane@jigrormo.ye', '(762) 526-5961', '1954-04-03', 'Insurance Clerk', 'Worker',
+INSERT INTO person(first_name, last_name, email, phone, date_of_birth, occupation, role, important)
+    -- VALUES ('Eula', 'Lane', 'eula.lane@jigrormo.ye', '(762) 526-5961', '1954-04-03', 'Insurance Clerk', 'Worker',
 --         false, 'root', 'root', NOW(), NOW()),
 --        ('Barry', 'Rodriquez', 'barry.rodriquez@zun.mm', '(267) 955-5124', '2013-04-03', 'Mortarman', 'Manager',
 --         false, 'root', 'root', NOW(), NOW()),
@@ -20,12 +19,12 @@
 --         'Parking Meter Collector', 'Supervisor', true, 'root', 'root', NOW(), NOW()),
 --        ('Mildred', 'Jacobs', 'mildred.jacobs@joraf.wf', '(642) 665-1763', '1966-11-03', 'Business Unit Manager',
 --         'Manager', false, 'root', 'root', NOW(), NOW()),
---        ('Gene', 'Goodman', 'gene.goodman@kem.tl', '(383) 458-2132', '2009-09-13', 'Technical Communicator',
---         'External', true, 'root', 'root', NOW(), NOW()),
---        ('Lettie', 'Bennett', 'lettie.bennett@odeter.bb', '(769) 335-6771', '1958-11-18',
---         'Correctional Officer Sergeant', 'Worker', false, 'root', 'root', NOW(), NOW()),
---        ('Mabel', 'Leach', 'mabel.leach@lisohuje.vi', '(803) 586-8035', '1945-10-25', 'Food Chemist',
---         'Supervisor', false, 'root', 'root', NOW(), NOW()),
+VALUES ('Gene', 'Goodman', 'gene.goodman@kem.tl', '(383) 458-2132', '2009-09-13', 'Technical Communicator',
+        'External', true),
+       ('Lettie', 'Bennett', 'lettie.bennett@odeter.bb', '(769) 335-6771', '1958-11-18',
+        'Correctional Officer Sergeant', 'Worker', true),
+       ('Mabel', 'Leach', 'mabel.leach@lisohuje.vi', '(803) 586-8035', '1945-10-25', 'Food Chemist',
+        'Supervisor', false);
 --        ('Jordan', 'Miccinesi', 'jordan.miccinesi@duod.gy', '(531) 919-2280', '1981-12-06',
 --         'Signals Intelligence/Electronic Warfare Chief', 'Manager', false, 'root', 'root', NOW(), NOW()),
 --        ('Marie', 'Parkes', 'marie.parkes@nowufpus.ph', '(814) 667-8937', '1942-10-07', 'Language Pathologist',

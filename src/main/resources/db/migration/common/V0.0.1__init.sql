@@ -18,8 +18,15 @@ CREATE INDEX idxsdse3b343v3353fdfdfdfd34df ON users USING btree (username);
 
 CREATE TABLE tenant
 (
-    tenant_id varchar(100) NOT NULL,
-    "name"   varchar(100) NULL,
+    tenant_id varchar(255) NOT NULL,
+    "name"    varchar(100) NOT NULL,
+    slogan    varchar(100) NOT NULL,
+    "type"    varchar(100) NOT NULL,
+    phone     varchar(100) NOT NULL,
+    email     varchar(100) NOT NULL,
+    website   varchar(100) NOT NULL,
+    address   varchar(100) NOT NULL,
+    logo      varchar(100) NOT NULL,
     CONSTRAINT tenant_pkey PRIMARY KEY (tenant_id)
 );
 CREATE INDEX idxdcxf3ksi0gyn1tieeq0id96lm ON tenant USING btree (name);

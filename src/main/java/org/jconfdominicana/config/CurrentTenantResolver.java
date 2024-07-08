@@ -2,25 +2,25 @@ package org.jconfdominicana.config;
 
 import io.quarkus.hibernate.orm.PersistenceUnitExtension;
 import io.quarkus.hibernate.orm.runtime.tenant.TenantResolver;
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jconfdominicana.model.common.Tenant;
 import org.jconfdominicana.security.vaadin.CacheService;
-import org.jconfdominicana.security.vaadin.SecurityService;
-
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 @PersistenceUnitExtension
-@RequestScoped
+@ApplicationScoped
 @Slf4j
+//@Priority(1)
+//@Alternative
 public class CurrentTenantResolver implements TenantResolver {
 
     @Inject
     CacheService cacheService;
-    @Inject
-    SecurityService securityService;
+
+    @Setter
+    String principal;
 
     public static final String DEFAULT = "public";
 
@@ -31,19 +31,11 @@ public class CurrentTenantResolver implements TenantResolver {
 
     @Override
     public String resolveTenantId() {
-        Optional<String> optional = securityService.getUsername();
-        if (optional.isPresent()) {
-            try {
-                Tenant tenant = cacheService.getTenant(optional.get());
-                if (tenant != null) {
-                    log.info("Schema: {}", tenant);
-                    return tenant.getTenantId();
-                }
-
-            } catch (ExecutionException e) {
-                throw new RuntimeException(e);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+        if (principal != null && !principal.isEmpty()) {
+            Tenant tenant = cacheService.getTenant(principal);
+            if (tenant != null) {
+                log.info("Schema: {}", tenant);
+                return tenant.getTenantId();
             }
         }
 
@@ -51,4 +43,6 @@ public class CurrentTenantResolver implements TenantResolver {
         log.info("Default schema: {}", defaultTenantId);
         return defaultTenantId;
     }
+
+
 }

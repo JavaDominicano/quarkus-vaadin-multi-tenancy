@@ -1,16 +1,12 @@
 package org.jconfdominicana.security.vaadin;
 
-import io.quarkus.cache.Cache;
-import io.quarkus.cache.CacheName;
-import io.quarkus.cache.CaffeineCache;
-import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.jconfdominicana.model.Profile;
 import org.jconfdominicana.model.common.Tenant;
 import org.jconfdominicana.model.common.User;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author me@fredpena.dev
@@ -20,52 +16,48 @@ import java.util.concurrent.ExecutionException;
 @ApplicationScoped
 public class CacheService {
 
-    @CacheName("tenant-cache")
-    Cache cache;
+    public static final String KEY_PROFILE = "profile-%s";
+    public static final String KEY_USER = "user-%s";
+    public static final String KEY_TENANT = "tenant-%s";
+
+    private final Map<String, Object> map = new ConcurrentHashMap<>();
 
     public void putProfile(String key, Profile value) {
-        cache.as(CaffeineCache.class).put("profile-%s".formatted(key), CompletableFuture.completedFuture(value));
+        map.put(KEY_PROFILE.formatted(key), value);
     }
 
     public void putUser(String key, User value) {
-        cache.as(CaffeineCache.class).put("user-%s".formatted(key), CompletableFuture.completedFuture(value));
+        map.put(KEY_USER.formatted(key), value);
     }
 
     public void putTenant(String key, Tenant value) {
-        cache.as(CaffeineCache.class).put("tenant-%s".formatted(key), CompletableFuture.completedFuture(value));
+        map.put(KEY_TENANT.formatted(key), value);
     }
 
-
-//    public Profile getProfile(String key) throws ExecutionException, InterruptedException {
-//        return (Profile) cache.as(CaffeineCache.class).getIfPresent("profile-%s".formatted(key)).get();
-//    }
-//
-//    public User getUser(String key) throws ExecutionException, InterruptedException {
-//        return (User) cache.as(CaffeineCache.class).getIfPresent("user-%s".formatted(key)).get();
-//    }
-
-    public Profile getProfile(String key) throws ExecutionException, InterruptedException {
-        CompletableFuture<Object> present = cache.as(CaffeineCache.class).getIfPresent("profile-%s".formatted(key));
-        if (present == null) {
-            return null;
+    private Object get(String key) {
+        if (map.containsKey(key)) {
+            return map.get(key);
         }
-        return (Profile) Uni.createFrom().completionStage(present).await().indefinitely();
+        return null;
     }
 
-    public User getUser(String key) throws ExecutionException, InterruptedException {
-        CompletableFuture<Object> present = cache.as(CaffeineCache.class).getIfPresent("user-%s".formatted(key));
-        if (present == null) {
-            return null;
-        }
-        return (User) Uni.createFrom().completionStage(present).await().indefinitely();
+    public Profile getProfile(String key) {
+        return (Profile) get(KEY_PROFILE.formatted(key));
     }
 
-    public Tenant getTenant(String key) throws ExecutionException, InterruptedException {
-        CompletableFuture<Object> present = cache.as(CaffeineCache.class).getIfPresent("tenant-%s".formatted(key));
-        if (present == null) {
-            return null;
-        }
-        return (Tenant) Uni.createFrom().completionStage(present).await().indefinitely();
+    public User getUser(String key) {
+        return (User) get(KEY_USER.formatted(key));
     }
+
+    public Tenant getTenant(String key) {
+        return (Tenant) get(KEY_TENANT.formatted(key));
+    }
+
+    public void clear(String key) {
+        map.remove(KEY_PROFILE.formatted(key));
+        map.remove(KEY_USER.formatted(key));
+        map.remove(KEY_TENANT.formatted(key));
+    }
+
 
 }

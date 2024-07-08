@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
+import org.jconfdominicana.config.CurrentTenantResolver;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -18,7 +19,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "tenant", indexes = {@Index(columnList = "name")})
+@Table(name = "tenant", schema = CurrentTenantResolver.DEFAULT, indexes = {@Index(columnList = "name")})
 public class Tenant implements Serializable {
 
     @Id
@@ -30,8 +31,37 @@ public class Tenant implements Serializable {
     @Size(min = 1, max = 100)
     private String name;
 
+    @NotNull
+    @Size(min = 1, max = 100)
+    private String slogan;
+
+    @NotNull
+    @Size(min = 1, max = 100)
+    private String type;
+
+    @NotNull
+    @Size(min = 1, max = 100)
+    private String phone;
+
+    @NotNull
+    @Size(min = 1, max = 100)
+    private String email;
+
+    @NotNull
+    @Size(min = 1, max = 100)
+    private String website;
+
+    @NotNull
+    @Size(min = 1, max = 100)
+    private String address;
+
+    @NotNull
+    @Size(min = 1, max = 100)
+    private String logo;
+
+
     @JsonIgnore
-    @OneToMany(mappedBy = "tenant")
+    @OneToMany(mappedBy = "tenant", fetch = FetchType.EAGER)
     @ToString.Exclude
     private Set<TenantUser> users;
 

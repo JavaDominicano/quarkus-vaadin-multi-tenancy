@@ -1,0 +1,32 @@
+vaadin-login-overlay-wrapper::part(overlay),
+.singup-view {
+    background-image: url("/images/login-bg.jpg");
+    -webkit-background-size: cover; /* For WebKit */
+    -moz-background-size: cover; /* Mozilla */
+    -o-background-size: cover; /* Opera */
+    background-size: cover; /* Generic */
+}
+
+vaadin-login-overlay-wrapper::part(brand) {
+    background: white !important;
+}
+
+vaadin-login-overlay-wrapper::part(description) {
+    display: none;
+}
+
+vaadin-login-overlay-wrapper::part(card) {
+    width: 30rem;
+    border-radius: 2.5rem;
+}
+
+vaadin-login-form-wrapper::part(form) {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+@media only screen and  (max-width: 1023px) and (orientation: landscape) {
+    vaadin-login-overlay-wrapper::part(card) {
+        border-radius: 0;
+    }
+}
