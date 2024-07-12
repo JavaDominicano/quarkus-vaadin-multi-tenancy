@@ -53,8 +53,11 @@ public class LoginView extends LoginOverlay implements BeforeEnterObserver {
 
         LoginI18n.ErrorMessage errorMessage = new LoginI18n.ErrorMessage();
         errorMessage.setTitle("Incorrect username or password");
-        errorMessage.setMessage("Try again or contact the administrator.");
+//        errorMessage.setMessage("Try again or contact the administrator.");
+        errorMessage.setMessage("Check that you have entered the correct username and password and try again or contact the administrator.");
         i18n.setErrorMessage(errorMessage);
+
+        setI18n(i18n);
 
         Span headerLabel = new Span();
         headerLabel.setText("Welcome back!");

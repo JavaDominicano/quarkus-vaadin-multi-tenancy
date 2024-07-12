@@ -1,2 +1,2 @@
-INSERT INTO profile(username, "name", rol) VALUES ('admin', 'admin', 'ADMIN');
-INSERT INTO profile(username, "name", rol) VALUES ('user', 'user', 'USER');
+-- INSERT INTO profile(username, "name", rol) VALUES ('admin', 'admin', 'ADMIN');
+-- INSERT INTO profile(username, "name", rol) VALUES ('user', 'user', 'USER');

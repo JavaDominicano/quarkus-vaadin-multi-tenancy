@@ -21,7 +21,7 @@ quarkus:
     host: 0.0.0.0
     auth:
       #      form:
-      #        enabled: false
+      #        enabled: true
       #        landing-page: /
       #        error-page: login?error
       #        username-parameter: username
@@ -58,7 +58,7 @@ quarkus:
     dialect: "org.hibernate.dialect.PostgreSQLDialect"
     database:
       generation: none #drop-and-create
-    #      default-schema: public
+#      default-schema: public
     log:
       sql: false
       format-sql: false

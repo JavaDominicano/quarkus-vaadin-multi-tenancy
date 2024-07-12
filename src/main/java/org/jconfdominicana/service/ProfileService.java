@@ -4,8 +4,8 @@ import jakarta.data.exceptions.EmptyResultException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.jconfdominicana.model.common.User;
-import org.jconfdominicana.repositories.common.UserRepository;
+import org.jconfdominicana.model.Profile;
+import org.jconfdominicana.repositories.ProfileRepository;
 
 import java.util.Optional;
 
@@ -15,11 +15,11 @@ import java.util.Optional;
  */
 @ApplicationScoped
 @RequiredArgsConstructor
-public class UserService {
+public class ProfileService {
 
-    private final UserRepository repository;
+    private final ProfileRepository repository;
 
-    public Optional<User> findByUsername(String username) {
+    public Optional<Profile> findByUsername(String username) {
         try {
             return Optional.ofNullable(repository.findByUsername(username));
         } catch (EmptyResultException ex) {
@@ -27,21 +27,14 @@ public class UserService {
         }
     }
 
-    public boolean isThisUserNotAlreadyRegistered(String username) {
-        try {
-            return repository.findByUsername(username) == null;
-        } catch (EmptyResultException ex) {
-            return true;
-        }
-    }
 
     @Transactional
-    public User insert(User element) {
+    public Profile insert(Profile element) {
         return repository.insert(element);
     }
 
     @Transactional
-    public User update(User element) {
+    public Profile update(Profile element) {
         return repository.update(element);
     }
 }

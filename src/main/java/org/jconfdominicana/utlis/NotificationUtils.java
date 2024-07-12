@@ -69,7 +69,7 @@ public class NotificationUtils {
         }));
     }
 
-    public void success(com.vaadin.flow.component.Component component) {
+    public void success() {
         success("The transaction was successful.");
     }
 

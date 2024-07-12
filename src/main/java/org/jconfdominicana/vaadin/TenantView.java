@@ -10,10 +10,15 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.PermitAll;
+import org.jconfdominicana.config.FlywayService;
 import org.jconfdominicana.model.common.Tenant;
 import org.jconfdominicana.model.common.User;
 import org.jconfdominicana.security.vaadin.CacheService;
 import org.jconfdominicana.security.vaadin.SecurityService;
+import org.jconfdominicana.service.ProfileService;
+import org.jconfdominicana.service.TenantService;
+import org.jconfdominicana.service.UserService;
+import org.jconfdominicana.utlis.NotificationUtils;
 import org.jconfdominicana.vaadin.person.PersonView;
 
 import java.util.function.Consumer;
@@ -21,18 +26,24 @@ import java.util.function.Consumer;
 @PageTitle("Tenant")
 @Route(value = "tenant", layout = TenantLayout.class)
 @RouteAlias(value = "", layout = TenantLayout.class)
+//@AnonymousAllowed
 @PermitAll
 public class TenantView extends VerticalLayout implements BeforeEnterObserver, TenantViewObserver {
 
+    private final transient SecurityService securityService;
+    private final transient CacheService cacheService;
+    private transient Consumer<Boolean> listLayout;
 
-    private final SecurityService securityService;
-    private final CacheService cacheService;
-    private Consumer<Boolean> listLayout;
+    private transient TenantForm form;
 
 
-    public TenantView(SecurityService securityService, CacheService cacheService) {
+    public TenantView(SecurityService securityService,  TenantService tenantService, ProfileService profileService,
+                      UserService userService, FlywayService flywayService, CacheService cacheService, NotificationUtils notification) {
         this.securityService = securityService;
         this.cacheService = cacheService;
+
+        securityService.getUsername().flatMap(userService::findByUsername).ifPresent(user -> form = new TenantForm(tenantService, profileService, flywayService, cacheService, notification, user));
+
 
         setSpacing(false);
         setSizeFull();
@@ -150,7 +161,13 @@ public class TenantView extends VerticalLayout implements BeforeEnterObserver, T
 
     @Override
     public void addTenant() {
-        System.out.println("addTenant");
+        if (form == null) return;
+        form.createDialog(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("VAMOS ALLA");
+            }
+        });
     }
 
     @Override

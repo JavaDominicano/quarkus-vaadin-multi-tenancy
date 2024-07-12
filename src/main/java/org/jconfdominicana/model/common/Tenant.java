@@ -12,6 +12,7 @@ import org.hibernate.proxy.HibernateProxy;
 import org.jconfdominicana.config.CurrentTenantResolver;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -31,39 +32,31 @@ public class Tenant implements Serializable {
     @Size(min = 1, max = 100)
     private String name;
 
-    @NotNull
-    @Size(min = 1, max = 100)
+    @Size(max = 100)
     private String slogan;
 
-    @NotNull
-    @Size(min = 1, max = 100)
+    @Size(max = 100)
     private String type;
 
-    @NotNull
-    @Size(min = 1, max = 100)
+    @Size(max = 100)
     private String phone;
 
-    @NotNull
-    @Size(min = 1, max = 100)
+    @Size(max = 100)
     private String email;
 
-    @NotNull
-    @Size(min = 1, max = 100)
+    @Size(max = 100)
     private String website;
 
-    @NotNull
-    @Size(min = 1, max = 100)
+    @Size(max = 100)
     private String address;
 
-    @NotNull
-    @Size(min = 1, max = 100)
+    @Size(max = 100)
     private String logo;
 
-
     @JsonIgnore
-    @OneToMany(mappedBy = "tenant", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "tenant", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private Set<TenantUser> users;
+    private Set<TenantUser> users = new HashSet<>();
 
     @Override
     public final boolean equals(Object o) {

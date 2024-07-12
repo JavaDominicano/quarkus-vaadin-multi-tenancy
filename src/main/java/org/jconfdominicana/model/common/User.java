@@ -9,10 +9,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.OptimisticLock;
 import org.hibernate.proxy.HibernateProxy;
 import org.jconfdominicana.config.CurrentTenantResolver;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -47,9 +49,14 @@ public class User implements Serializable {
     @Roles
     private String role;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @Transient
+    private Boolean policyCheckbox;
+
+    @JsonIgnore
     @ToString.Exclude
-    private Set<TenantUser> tenants;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OptimisticLock(excluded = true)
+    private Set<TenantUser> tenants = new HashSet<>();
 
     @Override
     public final boolean equals(Object o) {

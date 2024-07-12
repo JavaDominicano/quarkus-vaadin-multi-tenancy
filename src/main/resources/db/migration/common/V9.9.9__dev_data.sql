@@ -1,32 +1,32 @@
-INSERT INTO users (username, "password", role)
-VALUES ('admin', '$2a$10$bA8KlWD3s9SZYTUPI2ygAuUcQeZ2cVoia2rXjL7FA.6MoT3mVwcMO', 'ADMIN'),
-       ('user', '$2a$10$RBvR0CtTHwBPM3qqYTu8FOgc7XqvdsS/4cIqp46nT8yxQh5xVEI/q', 'USER');
-
-
--- INSERT INTO common_user (username, "name", "password")
--- VALUES ('f.pena', 'Fred Pena', '$2a$10$8c76Jfm15Ib7IOVh7l1DJOKtKUxeHvSlE/oj39W3uKbNyS3oK7BbK'),
---        ('m.perez', 'Maria Perez', '$2a$10$8c76Jfm15Ib7IOVh7l1DJOKtKUxeHvSlE/oj39W3uKbNyS3oK7BbK');
+-- INSERT INTO users (username, "password", role)
+-- VALUES ('admin', '$2a$10$bA8KlWD3s9SZYTUPI2ygAuUcQeZ2cVoia2rXjL7FA.6MoT3mVwcMO', 'ADMIN'),
+--        ('user', '$2a$10$RBvR0CtTHwBPM3qqYTu8FOgc7XqvdsS/4cIqp46nT8yxQh5xVEI/q', 'USER');
 --
 --
-INSERT INTO tenant (tenant_id, "name", slogan, "type", phone, email, website, address, logo)
-VALUES ('tenant_01', 'Innovative Solutions Inc.', 'Turning Ideas into Realities',
-        'Innovation and Technology Consulting', '+1 (555) 123-4567', 'info@innovativesolutions.com',
-        'www.innovativesolutions.com', 'Technology Avenue #123, Future Bright District, Progress City',
-        'images/tenant_01.png'),
-       ('tenant_02', 'EcoTech Sustainable Recycling LLC', 'For a Cleaner, Greener Future',
-        'Recycling and Sustainability', '+1 (555) 987-6543', 'contact@ecotechsustainability.com',
-        'www.ecotechsustainability.com', 'Recycler Street #456, EcoLife District, Sustainable City',
-        'images/tenant_02.png'),
-       ('tenant_03', 'Flavors of the World International Catering', 'Culinary Experiences Without Borders',
-        'Catering and Events', '+1 (555) 789-0123', 'events@flavorsoftheworld.com', 'www.flavorsoftheworld.com',
-        'Gastronomic Plaza #789, Exquisite Delights District, Gourmet City',
-        'images/tenant_03.png');
-
-
-INSERT INTO tenant_user (tenant_id, username, disabled)
-VALUES ('tenant_01', 'admin', false),
-       ('tenant_02', 'admin', false),
-       ('tenant_03', 'admin', false),
-       ('tenant_01', 'user', false),
-       ('tenant_03', 'user', false);
---        ('tenant_02', 'user', false);
+-- -- INSERT INTO common_user (username, "name", "password")
+-- -- VALUES ('f.pena', 'Fred Pena', '$2a$10$8c76Jfm15Ib7IOVh7l1DJOKtKUxeHvSlE/oj39W3uKbNyS3oK7BbK'),
+-- --        ('m.perez', 'Maria Perez', '$2a$10$8c76Jfm15Ib7IOVh7l1DJOKtKUxeHvSlE/oj39W3uKbNyS3oK7BbK');
+-- --
+-- --
+-- INSERT INTO tenant (tenant_id, "name", slogan, "type", phone, email, website, address, logo)
+-- VALUES ('tenant_01', 'Innovative Solutions Inc.', 'Turning Ideas into Realities',
+--         'Innovation and Technology Consulting', '+1 (555) 123-4567', 'info@innovativesolutions.com',
+--         'www.innovativesolutions.com', 'Technology Avenue #123, Future Bright District, Progress City',
+--         'images/tenant_01.png'),
+--        ('tenant_02', 'EcoTech Sustainable Recycling LLC', 'For a Cleaner, Greener Future',
+--         'Recycling and Sustainability', '+1 (555) 987-6543', 'contact@ecotechsustainability.com',
+--         'www.ecotechsustainability.com', 'Recycler Street #456, EcoLife District, Sustainable City',
+--         'images/tenant_02.png'),
+--        ('tenant_03', 'Flavors of the World International Catering', 'Culinary Experiences Without Borders',
+--         'Catering and Events', '+1 (555) 789-0123', 'events@flavorsoftheworld.com', 'www.flavorsoftheworld.com',
+--         'Gastronomic Plaza #789, Exquisite Delights District, Gourmet City',
+--         'images/tenant_03.png');
+--
+--
+-- INSERT INTO tenant_user (tenant_id, username, disabled)
+-- VALUES ('tenant_01', 'admin', false),
+--        ('tenant_02', 'admin', false),
+--        ('tenant_03', 'admin', false),
+--        ('tenant_01', 'user', false),
+--        ('tenant_03', 'user', false);
+-- --        ('tenant_02', 'user', false);

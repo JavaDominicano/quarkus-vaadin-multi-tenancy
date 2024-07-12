@@ -66,8 +66,7 @@ public class CustomFormAuthMechanism implements HttpAuthenticationMechanism {
 
 
     @Override
-    public Uni<SecurityIdentity> authenticate(RoutingContext context,
-                                              IdentityProviderManager identityProviderManager) {
+    public Uni<SecurityIdentity> authenticate(RoutingContext context, IdentityProviderManager identityProviderManager) {
         log.info("Acessing from form auth");
         if (context.normalizedPath().endsWith(POST_ACTION_PAGE) && context.request().method().equals(HttpMethod.POST)) {
             //we always re-auth if it is a post to the auth URL
@@ -79,9 +78,7 @@ public class CustomFormAuthMechanism implements HttpAuthenticationMechanism {
                 context.put(HttpAuthenticationMechanism.class.getName(), this);
                 String principal = result.getPrincipal();
                 currentTenantResolver.setPrincipal(principal);
-                Uni<SecurityIdentity> ret = identityProviderManager
-                        .authenticate(HttpSecurityUtils
-                                .setRoutingContextAttribute(new TrustedAuthenticationRequest(principal), context));
+                Uni<SecurityIdentity> ret = identityProviderManager.authenticate(HttpSecurityUtils.setRoutingContextAttribute(new TrustedAuthenticationRequest(principal), context));
 //                                .setRoutingContextAttribute(new CustomFormAuthenticationRequest(principal), context));
                 return ret.onItem().invoke(securityIdentity -> {
                     this.loginManager.save(securityIdentity, context, result, false);
@@ -91,8 +88,7 @@ public class CustomFormAuthMechanism implements HttpAuthenticationMechanism {
         }
     }
 
-    public Uni<SecurityIdentity> formAuth(final RoutingContext exchange,
-                                          final IdentityProviderManager securityContext) {
+    public Uni<SecurityIdentity> formAuth(final RoutingContext exchange, final IdentityProviderManager securityContext) {
         exchange.request().setExpectMultipart(true);
         return Uni.createFrom().emitter(uniEmitter -> {
             exchange.request().endHandler(event -> {
@@ -101,33 +97,52 @@ public class CustomFormAuthMechanism implements HttpAuthenticationMechanism {
 
                     final String jUsername = res.get("username");
                     final String jPassword = res.get("password");
+
                     if (jUsername == null || jPassword == null) {
                         uniEmitter.complete(null);
                         return;
                     }
-                    securityContext
-                            .authenticate(HttpSecurityUtils.setRoutingContextAttribute(new UsernamePasswordAuthenticationRequest(jUsername, new PasswordCredential(jPassword.toCharArray())), exchange))
-                            .subscribe()
-                            .with(identity -> {
-                                try {
-                                    this.loginManager.save(identity, exchange, null, false);
-                                    if (LOCATION_PAGE != null || exchange.request().getCookie(LOCATION_COOKIE) != null) {
-                                        handleRedirectBack(exchange);
-                                    } else {
-                                        exchange.response().setStatusCode(200);
-                                        exchange.response().end();
-                                    }
-                                    uniEmitter.complete(null);
-                                } catch (Throwable t) {
-                                    uniEmitter.fail(t);
-                                }
-                            }, uniEmitter::fail);
+                    securityContext.authenticate(HttpSecurityUtils.setRoutingContextAttribute(new UsernamePasswordAuthenticationRequest(jUsername, new PasswordCredential(jPassword.toCharArray())), exchange)).subscribe().with(identity -> {
+                        System.out.println("HttpSecurityUtils");
+                        try {
+                            this.loginManager.save(identity, exchange, null, false);
+                            if (LOCATION_PAGE != null || exchange.request().getCookie(LOCATION_COOKIE) != null) {
+                                handleRedirectBack(exchange);
+                            } else {
+                                exchange.response().setStatusCode(200);
+                                exchange.response().end();
+                            }
+                            uniEmitter.complete(null);
+                        } catch (Throwable t) {
+                            uniEmitter.fail(t);
+                        }
+                    }, t -> {
+                        handleRedirectBackWithError(exchange);
+                        uniEmitter.fail(t);
+                    });
                 } catch (Throwable t) {
                     uniEmitter.fail(t);
                 }
             });
             exchange.request().resume();
         });
+    }
+
+    protected void handleRedirectBackWithError(final RoutingContext exchange) {
+        Cookie redirect = exchange.request().getCookie(LOCATION_COOKIE);
+        String location;
+        if (redirect != null) {
+            verifyRedirectBackLocation(exchange.request().absoluteURI(), redirect.getValue());
+            redirect.setSecure(exchange.request().isSSL());
+            redirect.setSameSite(cookieSameSite);
+            location = redirect.getValue();
+            exchange.response().addCookie(redirect.setMaxAge(0));
+        } else {
+            location = exchange.request().scheme() + "://" + exchange.request().authority() + LOCATION_PAGE;
+        }
+        exchange.response().setStatusCode(302);
+        exchange.response().headers().add(HttpHeaderNames.LOCATION, location + "login?error");
+        exchange.response().end();
     }
 
     protected void handleRedirectBack(final RoutingContext exchange) {
@@ -150,11 +165,8 @@ public class CustomFormAuthMechanism implements HttpAuthenticationMechanism {
     protected void verifyRedirectBackLocation(String requestURIString, String redirectUriString) {
         URI requestUri = URI.create(requestURIString);
         URI redirectUri = URI.create(redirectUriString);
-        if (!requestUri.getAuthority().equals(redirectUri.getAuthority())
-            || !requestUri.getScheme().equals(redirectUri.getScheme())) {
-            log.error("Location cookie value {} does not match the current request URI {}'s scheme, host or port",
-                    redirectUriString,
-                    requestURIString);
+        if (!requestUri.getAuthority().equals(redirectUri.getAuthority()) || !requestUri.getScheme().equals(redirectUri.getScheme())) {
+            log.error("Location cookie value {} does not match the current request URI {}'s scheme, host or port", redirectUriString, requestURIString);
             throw new AuthenticationCompletionException();
         }
     }

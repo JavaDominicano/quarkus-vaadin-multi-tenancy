@@ -21,7 +21,8 @@ public class FlywayService {
 
         Flyway tenantDbMigration = Flyway.configure()
                 .dataSource(dataSource)
-                .locations("classpath:db/migration/tenant", "classpath:db/migration/" + schema)
+//                .locations("classpath:db/migration/tenant", "classpath:db/migration/" + schema)
+                .locations("classpath:db/migration/tenant")
                 .target(MigrationVersion.LATEST)
                 .baselineOnMigrate(true)
                 .schemas(schema)

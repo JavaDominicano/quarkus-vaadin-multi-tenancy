@@ -1,10 +1,12 @@
 package org.jconfdominicana.vaadin;
 
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
@@ -17,11 +19,13 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jconfdominicana.model.common.User;
@@ -37,6 +41,7 @@ import java.time.LocalDate;
 public class SingUpView extends Div {
     private static final String COLOR = "color";
 
+    private final Checkbox policyCheckbox = new Checkbox("By creating, you are agreeing to our ");
     private final TextField username = new TextField("Username");
     private final PasswordField password1 = new PasswordField("Password");
     private final PasswordField password2 = new PasswordField("Repeat password");
@@ -52,14 +57,7 @@ public class SingUpView extends Div {
 
     private User element;
 
-    public SingUpView
-            (
-                    @ConfigProperty(name = "quarkus.application.version", defaultValue = "unknown") String version,
-                    @ConfigProperty(name = "application.pattern.password", defaultValue = "unknown") String patternPassword,
-                    @ConfigProperty(name = "application.pattern.username", defaultValue = "unknown") String patternUsername,
-                    @ConfigProperty(name = "application.label.copyright", defaultValue = "unknown") String copyright,
-                    @ConfigProperty(name = "application.label.contact", defaultValue = "unknown") String contact
-            ) {
+    public SingUpView(@ConfigProperty(name = "quarkus.application.version", defaultValue = "unknown") String version, @ConfigProperty(name = "application.pattern.password", defaultValue = "unknown") String patternPassword, @ConfigProperty(name = "application.pattern.username", defaultValue = "unknown") String patternUsername, @ConfigProperty(name = "application.label.copyright", defaultValue = "unknown") String copyright, @ConfigProperty(name = "application.label.contact", defaultValue = "unknown") String contact) {
         this.patternPassword = patternPassword;
         this.patternUsername = patternUsername;
 
@@ -105,33 +103,20 @@ public class SingUpView extends Div {
         HorizontalLayout accountLayout = new HorizontalLayout(accountLabel, loginLink);
         accountLayout.addClassNames(LumoUtility.FlexWrap.WRAP);
 
-        Checkbox policyCheckbox = new Checkbox();
         policyCheckbox.addClassNames(LumoUtility.AlignContent.CENTER);
-        policyCheckbox.getStyle()
-                .set("margin", "0px !important");
-
-        Span creatingLabel = new Span("By creating, you are agreeing to our ");
-        creatingLabel.getStyle().setMarginInlineStart("0").setMarginInlineEnd("0").set("margin-block-start", "1em").set("margin-block-end", "1em");
-        creatingLabel.addClassNames(LumoUtility.LineHeight.SMALL, LumoUtility.Margin.Bottom.NONE, LumoUtility.Display.BLOCK);
-        creatingLabel.getStyle()
-                .set("margin-bottom", "0px !important")
-                .set("margin-top", "0px !important");
+        policyCheckbox.getStyle().set("margin", "0px !important");
 
         Anchor termsLink = createAnchor("#", "Terms of Service");
         termsLink.addClassNames(LumoUtility.TextColor.HEADER);
-        termsLink.getStyle()
-                .set("margin-bottom", "0px !important")
-                .set("margin-top", "0px !important");
+        termsLink.getStyle().set("margin-bottom", "0px !important").set("margin-top", "0px !important");
 
         Anchor policyLink = createAnchor("#", "Privacy Policy");
         policyLink.addClassNames(LumoUtility.TextColor.HEADER);
-        policyLink.getStyle()
-                .set("margin-left", "2rem !important")
-                .set("margin-top", "0px !important")
-                .set("margin-bottom", "0px !important");
+        policyLink.getStyle().set("margin-left", "1.7rem !important").set("margin-top", "0px !important").set("margin-bottom", "0px !important");
 
-        HorizontalLayout creatingLayout = new HorizontalLayout(policyCheckbox, creatingLabel, termsLink, policyLink);
-        creatingLayout.addClassNames(LumoUtility.FlexWrap.WRAP, LumoUtility.JustifyContent.START, LumoUtility.Margin.Top.LARGE, LumoUtility.Margin.Bottom.LARGE);
+        HorizontalLayout creatingLayout = new HorizontalLayout(policyCheckbox, termsLink, policyLink);
+        creatingLayout.addClassNames(LumoUtility.FlexWrap.WRAP, LumoUtility.Margin.Top.LARGE, LumoUtility.Margin.Bottom.LARGE);
+        creatingLayout.addClassNames(LumoUtility.JustifyContent.START, LumoUtility.AlignItems.CENTER, LumoUtility.Gap.XSMALL);
 
         Button singup = new Button("Sing Up");
         singup.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_LARGE);
@@ -152,13 +137,9 @@ public class SingUpView extends Div {
         section.addClassNames(LumoUtility.Display.FLEX, LumoUtility.FlexDirection.COLUMN, LumoUtility.Height.AUTO);
         section.addClassNames(LumoUtility.MaxWidth.FULL, LumoUtility.Padding.LARGE, LumoUtility.Padding.Bottom.NONE);
         section.addClassNames(LumoUtility.BoxShadow.SMALL, LumoUtility.Background.BASE, LumoUtility.Margin.SMALL);
-        section.getStyle()
-                .setWidth("30rem")
-                .setBorderRadius("2.5rem");
-
+        section.getStyle().setWidth("30rem").setBorderRadius("2.5rem");
 
         add(section);
-
 
         binder = new Binder<>(User.class);
 
@@ -167,58 +148,65 @@ public class SingUpView extends Div {
         validatedPasswordField(password2);
 
         singup.addClickListener(this::saveOrUpdate);
+        singup.addClickShortcut(Key.ENTER);
 
-        binder.forField(username)
-                .withValidator(value -> {
-                    if (element == null || !value.equals(element.getUsername())) {
-                        return userService.isThisUserNotAlreadyRegistered(value);
-                    }
-                    return true;
-                }, "This user is already registered.")
-                .withValidator(value -> !value.isEmpty() && value.matches(patternUsername), "You are not a valid user.")
-                .bind(User::getUsername, User::setUsername);
+        binder.forField(username).withValidator(value -> {
+            if ((element == null || !value.equals(element.getUsername())) && !value.isEmpty()) {
+                return userService.isThisUserNotAlreadyRegistered(value);
+            }
+            return true;
+        }, "This user is already registered.").withValidator(value -> !value.isEmpty() && value.matches(patternUsername), "You are not a valid user.").bind(User::getUsername, User::setUsername);
 
-        binder.forField(password1)
-                .withValidator(value -> (value != null && !value.isEmpty()) && value.matches(patternPassword), "It is not a valid password.")
-                .withValidator(value -> value.equals(password2.getValue()), "The passwords do not match.")
-                .bind(u -> null, (u, s) -> {
-                });
+        binder.forField(password1).withValidator(value -> (value != null && !value.isEmpty()) && value.matches(patternPassword), "It is not a valid password.").withValidator(value -> value.equals(password2.getValue()), "The passwords do not match.").bind(u -> null, (u, s) -> {
+        });
 
         binder.forField(password2)
-                .withValidator(value -> (value != null && !value.isEmpty()) && value.matches(patternPassword), "It is not a valid password.")
-                .withValidator(value -> value.equals(password1.getValue()), "The passwords do not match.")
+                .withValidator(value -> (value != null && !value.isEmpty()) && value.matches(patternPassword), "It is not a valid password.").withValidator(value -> value.equals(password1.getValue()), "The passwords do not match.").bind(u -> null, (u, s) -> {
+                });
+
+        binder.forField(policyCheckbox)
+                .withValidator(value -> value, "You must agree to the terms and conditions!")
                 .bind(u -> null, (u, s) -> {
                 });
+
 
     }
 
     private void saveOrUpdate(ClickEvent<Button> buttonClickEvent) {
-//        if (this.element == null) {
-//            this.element = new User();
-//        }
-//        try {
-//            binder.writeBean(this.element);
-//
-//            if (element.getUserId() == null || changePassword.getValue()) {
-//
-//                element.setPassword(BcryptUtil.bcryptHash(password1.getValue()));
-//            }
-//
-//            ConfirmationDialog confirmationDialog = new ConfirmationDialog("Por favor confirmar", "¿Está seguro de que desea realizar esta acción?",
-//                    d -> {
-//                        d.close();
-//
-//                        userService.update(this.element);
-//                        notificationBean.notificationSuccess("La transacción fue exitosa.");
-//
-//                        displacement.setDisplacement(userService.displacements());
-//                    });
-//            confirmationDialog.show(this);
-//        } catch (ValidationException validationException) {
-//            notificationBean.notificationError(validationException);
-//        }
-    }
+        if (this.element == null) {
+            this.element = new User();
+        }
+        try {
+            binder.writeBean(this.element);
 
+            this.element.setPassword(BcryptUtil.bcryptHash(password1.getValue()));
+            this.element.setRole("ADMIN");
+
+            ConfirmDialog dialog = new ConfirmDialog();
+            dialog.setHeader("Confirm Signup");
+            dialog.setText("Do you really want to sign up?");
+
+            dialog.setCancelable(true);
+            dialog.setCancelText("No");
+            dialog.setCancelButtonTheme(ButtonVariant.LUMO_ERROR.getVariantName());
+            dialog.addCancelListener(event -> {
+                notification.contrast("Signup cancelled!");
+            });
+
+            dialog.setConfirmText("Yes");
+            dialog.addConfirmListener(event -> {
+                userService.insert(this.element);
+                notification.success("Signed up successfully!");
+
+                element = null;
+                binder.readBean(null);
+            });
+            dialog.open();
+
+        } catch (ValidationException validationException) {
+            notification.error(validationException);
+        }
+    }
 
     private void validatedUserCodeField(TextField username) {
         username.setClearButtonVisible(true);
@@ -266,7 +254,7 @@ public class SingUpView extends Div {
         Div strength = new Div();
         strength.add(strengthText);
 
-        strength.add(new Text("Password security"), strengthText);
+        strength.add(new Text("Password security: "), strengthText);
         password.setHelperComponent(strength);
         password.setValueChangeMode(ValueChangeMode.EAGER);
         password.addValueChangeListener(e -> updateHelper(e.getValue(), strengthText, icon));

@@ -15,21 +15,22 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-@Table(name = "tenant_user", schema = CurrentTenantResolver.DEFAULT)
+@Table(name = "tenant_user", schema = CurrentTenantResolver.DEFAULT,
+        uniqueConstraints = @UniqueConstraint(columnNames = {"tenant", "user"}))
 public class TenantUser implements Serializable {
 
-    @EmbeddedId
-    private TenantUserKey id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @MapsId("tenantId")
-    @JoinColumn(name = "tenant_id")
     @ToString.Exclude
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "tenant_id", referencedColumnName = "tenant_id", nullable = false)
     private Tenant tenant;
 
-    @ManyToOne
-    @MapsId("username")
-    @JoinColumn(name = "username")
+    @ToString.Exclude
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "username", referencedColumnName = "username", nullable = false)
     private User user;
 
     private boolean disabled;
