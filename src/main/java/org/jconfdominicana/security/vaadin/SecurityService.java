@@ -97,9 +97,9 @@ public class SecurityService {
         clearSession();
 
         UI.getCurrent().getPage().setLocation("/login");
-        NewCookie cookie = new NewCookie.Builder("quarkus-credential").path("/").maxAge(0).build();
+        NewCookie cookie = new NewCookie.Builder("vaadin-auth-credential").path("/").maxAge(0).build();
 
-        VaadinResponse.getCurrent().addCookie(new Cookie("quarkus-credential", cookie.getValue()));
+        VaadinResponse.getCurrent().addCookie(new Cookie("vaadin-auth-credential", cookie.getValue()));
     }
 
 

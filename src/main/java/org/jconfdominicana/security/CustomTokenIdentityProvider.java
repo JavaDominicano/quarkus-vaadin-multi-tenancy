@@ -24,7 +24,6 @@ public class CustomTokenIdentityProvider extends AbstractIdentityProvider {
     @Override
     protected SecurityIdentity authenticate(TokenAuthenticationRequest request) {
         User user = userRepository.findByUsername("admin");
-        log.info("holi");
         QuarkusPrincipal principal = new QuarkusPrincipal("admin");
         QuarkusSecurityIdentity.Builder securityIdentityBuilder = QuarkusSecurityIdentity.builder()
                 .setPrincipal(principal)

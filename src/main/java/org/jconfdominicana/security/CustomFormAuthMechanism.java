@@ -78,8 +78,9 @@ public class CustomFormAuthMechanism implements HttpAuthenticationMechanism {
                 context.put(HttpAuthenticationMechanism.class.getName(), this);
                 String principal = result.getPrincipal();
                 currentTenantResolver.setPrincipal(principal);
-                Uni<SecurityIdentity> ret = identityProviderManager.authenticate(HttpSecurityUtils.setRoutingContextAttribute(new TrustedAuthenticationRequest(principal), context));
-//                                .setRoutingContextAttribute(new CustomFormAuthenticationRequest(principal), context));
+                Uni<SecurityIdentity> ret = identityProviderManager
+                        .authenticate(HttpSecurityUtils
+                                .setRoutingContextAttribute(new TrustedAuthenticationRequest(principal), context));
                 return ret.onItem().invoke(securityIdentity -> {
                     this.loginManager.save(securityIdentity, context, result, false);
                 });
