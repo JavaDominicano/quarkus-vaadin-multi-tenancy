@@ -15,6 +15,8 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import com.vaadin.quarkus.annotation.UIScoped;
+import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jconfdominicana.security.vaadin.SecurityService;
@@ -23,6 +25,7 @@ import org.jconfdominicana.utlis.NotificationUtils;
 import java.time.LocalDate;
 
 
+@UIScoped
 @AnonymousAllowed
 @PageTitle("Login")
 @Route(value = "login")
@@ -34,7 +37,6 @@ public class LoginView extends LoginOverlay implements BeforeEnterObserver {
     SecurityService securityService;
     @Inject
     NotificationUtils notification;
-
     public LoginView(
             @ConfigProperty(name = "quarkus.application.version", defaultValue = "unknown") String version,
             @ConfigProperty(name = "application.label.copyright", defaultValue = "unknown") String copyright,
@@ -66,7 +68,7 @@ public class LoginView extends LoginOverlay implements BeforeEnterObserver {
         Span accountLabel = new Span();
         accountLabel.setText("Doesn`t have an account yet?");
         anchor.setText("Sign Up");
-
+//
         Span copyrightLabel = new Span();
         copyrightLabel.setText(copyright.formatted(LocalDate.now().getYear()));
         Span versionLabel = new Span();

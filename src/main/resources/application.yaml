@@ -7,16 +7,18 @@ quarkus:
   log:
     level: INFO
     category:
-      "org.hibernate":
-        level: "OFF"
+#      "org.hibernate":
+#        level: "OFF"
       "org.atmosphere":
         level: "OFF"
-      "io.quarkus.hibernate.orm":
-        level: TRACE
-      "org.jconfdominicana":
-        level: "OFF"
-  #      "io.quarkus.vertx.http":
-  #        level: TRACE
+#      "io.quarkus.hibernate.orm":
+#        level: TRACE
+#      "org.jconfdominicana":
+#        level: DEBUG
+#      "com.vaadin":
+#        level: "ERROR"
+#  #      "io.quarkus.vertx.http":
+#  #        level: TRACE
   http:
     host: 0.0.0.0
     auth:

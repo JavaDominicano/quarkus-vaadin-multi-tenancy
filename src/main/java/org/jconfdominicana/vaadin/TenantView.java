@@ -8,6 +8,7 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.PermitAll;
 import org.jconfdominicana.config.FlywayService;
@@ -100,6 +101,7 @@ public class TenantView extends VerticalLayout implements BeforeEnterObserver, T
             tenantLayout.setHeight("200px");
             tenantLayout.getStyle().set("cursor", "pointer");
             tenantLayout.addSingleClickListener(event1 -> {
+//                VaadinSession.getCurrent().setAttribute("tenant", tenant);
                 cacheService.putTenant(user.getUsername(), tenant);
 
                 UI.getCurrent().navigate(PersonView.class);

@@ -18,21 +18,21 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TenantService {
 
-//    private final EntityManager entityManager;
+    private final EntityManager entityManager;
 
-    private final TenantRepository repository;
+//    private final TenantRepository repository;
 
 
     @Transactional
     public void insert(Tenant element) {
-        repository.insert(element);
-//        entityManager.persist(element);
+//        repository.insert(element);
+        entityManager.persist(element);
     }
 
-    public Tenant findByTenantName(String tenantId) {
-        Tenant tenant = repository.findById(tenantId)
-                .orElseThrow(() -> new NotFoundException());
-
-        return tenant;
-    }
+//    public Tenant findByTenantName(String tenantId) {
+//        Tenant tenant = repository.findById(tenantId)
+//                .orElseThrow(() -> new NotFoundException());
+//
+//        return tenant;
+//    }
 }
