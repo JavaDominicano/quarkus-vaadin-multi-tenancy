@@ -25,6 +25,10 @@ header nav a[highlight] {
     background-color: var(--lumo-primary-color-10pct);
 }
 
+#select-tenant vaadin-select-value-button {
+    height: 3.5rem;
+}
+
 .list-mode {
     width: calc(100% - 20px);
     max-width: 1024px;

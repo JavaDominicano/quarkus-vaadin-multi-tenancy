@@ -1,6 +1,5 @@
 package org.jconfdominicana.vaadin;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -9,21 +8,37 @@ import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.menubar.MenuBar;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
+import com.vaadin.flow.component.orderedlayout.Scroller;
+import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.sidenav.SideNav;
+import com.vaadin.flow.component.sidenav.SideNavItem;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
-import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import org.jconfdominicana.config.FlywayService;
 import org.jconfdominicana.model.Profile;
 import org.jconfdominicana.model.common.Tenant;
-import org.jconfdominicana.repositories.ProfileRepository;
+import org.jconfdominicana.model.common.TenantUser;
+import org.jconfdominicana.model.common.User;
 import org.jconfdominicana.security.vaadin.CacheService;
 import org.jconfdominicana.security.vaadin.SecurityService;
+import org.jconfdominicana.service.ProfileService;
+import org.jconfdominicana.service.TenantService;
+import org.jconfdominicana.utlis.NotificationUtils;
 import org.jconfdominicana.vaadin.person.PersonView;
 import org.vaadin.lineawesome.LineAwesomeIcon;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -32,23 +47,28 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
 
     private H1 viewTitle;
 
+    private final Select<Tenant> select = new Select<>();
+
+    private final TenantForm form;
     private final SecurityService securityService;
     private final CacheService cacheService;
     private final AccessAnnotationChecker accessChecker;
-    private final ProfileRepository profileRepository;
-    ;
+    private final ProfileService profileService;
 
-    public MainLayout(SecurityService securityService, AccessAnnotationChecker accessChecker, CacheService cacheService, ProfileRepository profileRepository) {
+    public MainLayout(SecurityService securityService, AccessAnnotationChecker accessChecker, CacheService cacheService,
+                      TenantService tenantService, ProfileService profileService,
+                      FlywayService flywayService, NotificationUtils notification) {
         this.securityService = securityService;
         this.accessChecker = accessChecker;
         this.cacheService = cacheService;
-        this.profileRepository = profileRepository;
+        this.profileService = profileService;
 
-//        setPrimarySection(Section.DRAWER);
-//        addDrawerContent();
-//        addHeaderContent();
-        addToNavbar(createHeaderContent());
-        setDrawerOpened(false);
+
+        form = new TenantForm(tenantService, profileService, flywayService, cacheService, notification);
+
+        setPrimarySection(Section.DRAWER);
+        addDrawerContent();
+        addHeaderContent();
     }
 
     private void addHeaderContent() {
@@ -58,34 +78,107 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
         viewTitle = new H1();
         viewTitle.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
 
-//        addToNavbar(true, toggle, viewTitle);
-
-        addToNavbar(createHeaderContent());
+        addToNavbar(true, toggle, viewTitle);
     }
 
-    private Component createHeaderContent() {
-        Header header = new Header();
+    private void addDrawerContent() {
+        select.setId("select-tenant");
+
+        select.addClassNames(LumoUtility.Width.FULL, LumoUtility.Border.ALL, LumoUtility.BorderRadius.LARGE);
+        select.addClassNames(LumoUtility.BorderColor.PRIMARY);
+        select.getStyle()
+                .set("border-width", "2px")
+                .set("--vaadin-input-field-background", "transparent");
+
+        select.setRenderer(new ComponentRenderer<>(tenant -> {
+            FlexLayout wrapper = new FlexLayout();
+            wrapper.setAlignItems(Alignment.CENTER);
+
+            Image image = new Image();
+            if (tenant.getLogo() != null) {
+                image.setSrc(tenant.getLogo());
+                image.setAlt(tenant.getName());
+                image.addClassNames(LumoUtility.Width.MEDIUM, LumoUtility.Margin.Right.MEDIUM);
+                wrapper.add(image);
+            }
+
+            Div info = new Div();
+            info.setText(tenant.getName());
+
+            Div details = new Div();
+            details.setText(tenant.getSlogan());
+            details.addClassNames(LumoUtility.FontSize.SMALL, LumoUtility.TextColor.SECONDARY);
+            info.add(details);
+
+            wrapper.add(info);
+            return wrapper;
+        }));
+
+        Header header = new Header(select);
+        header.addClassNames(LumoUtility.Margin.MEDIUM);
+
+        Scroller scroller = new Scroller(createNavigation());
+        scroller.addClassNames(LumoUtility.Margin.MEDIUM, LumoUtility.Flex.AUTO);
+
+        Footer footer = createFooter();
+        footer.addClassNames(LumoUtility.Margin.MEDIUM);
+
+        Div layout = new Div(header, scroller, footer);
+        layout.addClassNames(LumoUtility.Height.FULL, LumoUtility.Padding.MEDIUM);
+        layout.addClassNames(LumoUtility.Display.FLEX, LumoUtility.FlexDirection.COLUMN);
+
+        addToDrawer(layout);
+    }
+
+    private SideNav createNavigation() {
+        SideNav nav = new SideNav();
+
+        nav.addItem(new SideNavItem("Persons", PersonView.class, LineAwesomeIcon.USER.create()));
+
+        return nav;
+    }
+
+    private void reloadSelect(Tenant tenant) {
+        List<Tenant> tenantUsers = new ArrayList<>(securityService.getUser().map(User::getTenants).orElse(new HashSet<>()).stream().map(TenantUser::getTenant).toList());
+        tenantUsers.add(getTenant());
+        select.setItems(tenantUsers);
+        select.setValue(tenant);
+    }
+
+    private Footer createFooter() {
+        Footer layout = new Footer();
 
         securityService.getUsername().ifPresent(username -> {
             Tenant tenant = cacheService.getTenant(username);
             if (tenant != null) {
-                header.addClassNames(LumoUtility.BoxSizing.BORDER, LumoUtility.Display.FLEX, LumoUtility.FlexDirection.COLUMN, LumoUtility.Width.FULL);
 
-                Div layout = new Div();
-                layout.addClassNames(LumoUtility.Display.FLEX, LumoUtility.AlignItems.CENTER, LumoUtility.Padding.Horizontal.LARGE);
+                reloadSelect(tenant);
 
-                H1 appName = new H1("JConf - 2024");
-                appName.addClassNames(LumoUtility.Margin.Vertical.MEDIUM, LumoUtility.Margin.End.AUTO, LumoUtility.FontSize.LARGE);
-                layout.add(appName);
+                select.addValueChangeListener(event -> {
 
-                Profile profile = profileRepository.findByUsername(username);
+                    if (event.getValue() == null) return;
 
-                if (profile != null) {
+                    if (event.getValue().getTenantId().equals("NEW")) {
+
+                        securityService.getUser().ifPresent(form::setUser);
+
+                        form.createDialog(() -> reloadSelect(tenant));
+                    } else {
+                        cacheService.putTenant(username, event.getValue());
+                        UI.getCurrent().getPage().reload();
+                    }
+                });
+
+                Optional<Profile> optional = profileService.findByUsername(username);
+
+                if (optional.isPresent()) {
+                    Profile profile = optional.get();
 
                     cacheService.putProfile(username, profile);
 
                     Avatar avatar = new Avatar(profile.getName());
-                    StreamResource resource = new StreamResource("profile-pic", () -> new ByteArrayInputStream(new byte[]{}));
+                    StreamResource resource = new StreamResource("profile-pic",
+                            () -> new ByteArrayInputStream(new byte[]{}));
                     avatar.setImageResource(resource);
                     avatar.setThemeName("xsmall");
                     avatar.getElement().setAttribute("tabindex", "-1");
@@ -94,16 +187,6 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
                     userMenu.setThemeName("tertiary-inline contrast");
 
                     MenuItem userName = userMenu.addItem("");
-
-                    securityService.userHasSomeTenant().ifPresent(some -> {
-                        if (some) {
-                            userName.getSubMenu().addItem("Change company", e -> {
-                                securityService.clearSession();
-                                UI.getCurrent().navigate("");
-                            });
-                        }
-                    });
-
                     Div div = new Div();
                     div.add(avatar);
                     div.add(profile.getName());
@@ -114,71 +197,16 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
                     userName.add(div);
                     userName.getSubMenu().addItem("Sign out", e -> securityService.logout());
 
-
                     layout.add(userMenu);
+
                 } else {
                     Anchor loginLink = new Anchor("login", "Sign in");
                     layout.add(loginLink);
                 }
-
-                Nav nav = new Nav();
-                nav.addClassNames(LumoUtility.Display.FLEX, LumoUtility.Overflow.AUTO, LumoUtility.Padding.Horizontal.MEDIUM, LumoUtility.Padding.Vertical.XSMALL);
-
-                // Wrap the links in a list; improves accessibility
-                UnorderedList list = new UnorderedList();
-                list.addClassNames(LumoUtility.Display.FLEX, LumoUtility.Gap.SMALL, LumoUtility.ListStyleType.NONE, LumoUtility.Margin.NONE, LumoUtility.Padding.NONE);
-                nav.add(list);
-
-                for (MenuItemInfo menuItem : createMenuItems()) {
-                    if (accessChecker.hasAccess(menuItem.getView())) {
-                        list.add(menuItem);
-                    }
-
-                }
-
-                header.add(layout, nav);
-
             }
         });
 
-
-        return header;
-    }
-
-    private MenuItemInfo[] createMenuItems() {
-        return new MenuItemInfo[]{ //
-
-                new MenuItemInfo("Persons", LineAwesomeIcon.USER.create(), PersonView.class), //
-
-        };
-    }
-
-    public static class MenuItemInfo extends ListItem {
-
-        private final Class<? extends Component> view;
-
-        public MenuItemInfo(String menuTitle, Component icon, Class<? extends Component> view) {
-            this.view = view;
-            RouterLink link = new RouterLink();
-            // Use Lumo classnames for various styling
-            link.addClassNames(LumoUtility.Display.FLEX, LumoUtility.Gap.XSMALL, LumoUtility.Height.MEDIUM, LumoUtility.AlignItems.CENTER, LumoUtility.Padding.Horizontal.SMALL, LumoUtility.TextColor.BODY);
-            link.setRoute(view);
-
-            Span text = new Span(menuTitle);
-            // Use Lumo classnames for various styling
-            text.addClassNames(LumoUtility.FontWeight.MEDIUM, LumoUtility.FontSize.MEDIUM, LumoUtility.Whitespace.NOWRAP);
-
-            if (icon != null) {
-                link.add(icon);
-            }
-            link.add(text);
-            add(link);
-        }
-
-        public Class<?> getView() {
-            return view;
-        }
-
+        return layout;
     }
 
     @Override
@@ -189,5 +217,28 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
                 event.forwardTo("");
             }
         });
+    }
+
+    @Override
+    protected void afterNavigation() {
+        super.afterNavigation();
+        viewTitle.setText(getCurrentPageTitle());
+    }
+
+    private String getCurrentPageTitle() {
+        PageTitle title = getContent().getClass().getAnnotation(PageTitle.class);
+        return title == null ? "" : title.value();
+    }
+
+    private Tenant getTenant() {
+
+        Tenant tenant = new Tenant();
+        tenant.setTenantId("NEW");
+        tenant.setName("Add");
+        tenant.setSlogan("Add new tenant");
+        tenant.setLogo("images/add.png");
+
+
+        return tenant;
     }
 }

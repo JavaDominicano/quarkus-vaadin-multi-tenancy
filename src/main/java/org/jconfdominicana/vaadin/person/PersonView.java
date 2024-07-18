@@ -23,14 +23,9 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoIcon;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.PermitAll;
-import jakarta.data.Order;
-import jakarta.data.Sort;
-import jakarta.data.page.PageRequest;
 import org.jconfdominicana.model.Person;
 import org.jconfdominicana.repositories.PersonRepository;
 import org.jconfdominicana.vaadin.MainLayout;
-
-import java.util.List;
 
 @PageTitle("List - Person")
 @Route(value = "persons", layout = MainLayout.class)

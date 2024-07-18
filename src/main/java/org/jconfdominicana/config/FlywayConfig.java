@@ -27,8 +27,8 @@ public class FlywayConfig {
     public void migrateFlyway() {
         flywayService.initMetadataSchema();
 
-//        Arrays.asList("tenant_01", "tenant_02", "tenant_03")
-//                .forEach(flywayService::initNewTenantSchema);
+        Arrays.asList("tenant_01", "tenant_02", "tenant_03")
+                .forEach(flywayService::initNewTenantSchemaTest);
 
 //        for (Tenant tenant : tenantService.findAll()) {
 //            flywayService.initNewTenantSchema(tenant.getTenantId());

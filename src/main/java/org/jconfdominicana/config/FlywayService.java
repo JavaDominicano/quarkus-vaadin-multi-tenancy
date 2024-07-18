@@ -32,6 +32,21 @@ public class FlywayService {
         log.info("Tenant {} database migration complete", schema);
     }
 
+    public void initNewTenantSchemaTest(String schema) {
+        log.info("Doing tenant {} database migration", schema);
+
+        Flyway tenantDbMigration = Flyway.configure()
+                .dataSource(dataSource)
+                .locations("classpath:db/migration/tenant", "classpath:db/migration/" + schema)
+                .target(MigrationVersion.LATEST)
+                .baselineOnMigrate(true)
+                .schemas(schema)
+                .load();
+        tenantDbMigration.migrate();
+
+        log.info("Tenant {} database migration complete", schema);
+    }
+
     public void initMetadataSchema() {
         log.info("Doing common database migration");
 

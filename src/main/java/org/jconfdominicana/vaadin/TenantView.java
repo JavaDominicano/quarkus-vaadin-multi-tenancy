@@ -34,15 +34,17 @@ public class TenantView extends VerticalLayout implements BeforeEnterObserver, T
     private final transient CacheService cacheService;
     private transient Consumer<Boolean> listLayout;
 
-    private transient TenantForm form;
+    private final TenantForm form;
 
 
-    public TenantView(SecurityService securityService,  TenantService tenantService, ProfileService profileService,
+    public TenantView(SecurityService securityService, TenantService tenantService, ProfileService profileService,
                       UserService userService, FlywayService flywayService, CacheService cacheService, NotificationUtils notification) {
         this.securityService = securityService;
         this.cacheService = cacheService;
 
-        securityService.getUsername().flatMap(userService::findByUsername).ifPresent(user -> form = new TenantForm(tenantService, profileService, flywayService, cacheService, notification, user));
+        form = new TenantForm(tenantService, profileService, flywayService, cacheService, notification);
+
+        securityService.getUsername().flatMap(userService::findByUsername).ifPresent(user -> form.setUser(user));
 
 
         setSpacing(false);
@@ -103,8 +105,11 @@ public class TenantView extends VerticalLayout implements BeforeEnterObserver, T
                 UI.getCurrent().navigate(PersonView.class);
             });
 
-            Image img = new Image(tenant.getLogo(), tenant.getName());
-            img.setWidth("100px");
+            if (tenant.getLogo() != null) {
+                Image img = new Image(tenant.getLogo(), tenant.getName());
+                img.setWidth("100px");
+                tenantLayout.add(img);
+            }
 
             VerticalLayout descriptionLayout = new VerticalLayout();
             descriptionLayout.addClassName("description-list");
@@ -114,7 +119,7 @@ public class TenantView extends VerticalLayout implements BeforeEnterObserver, T
 
             descriptionLayout.add(name, type, slogan);
 
-            tenantLayout.add(img, descriptionLayout);
+            tenantLayout.add(descriptionLayout);
 
             layout.add(tenantLayout);
         });
@@ -142,9 +147,11 @@ public class TenantView extends VerticalLayout implements BeforeEnterObserver, T
                 UI.getCurrent().navigate(PersonView.class);
             });
 
-            Image img = new Image(tenant.getLogo(), tenant.getName());
-            img.setWidth("100px");
-            tenantLayout.add(img);
+            if (tenant.getLogo() != null) {
+                Image img = new Image(tenant.getLogo(), tenant.getName());
+                img.setWidth("100px");
+                tenantLayout.add(img);
+            }
 
             H4 name = new H4(tenant.getName());
             H6 slogan = new H6(tenant.getSlogan());
@@ -162,6 +169,7 @@ public class TenantView extends VerticalLayout implements BeforeEnterObserver, T
     @Override
     public void addTenant() {
         if (form == null) return;
+
         form.createDialog(new Runnable() {
             @Override
             public void run() {

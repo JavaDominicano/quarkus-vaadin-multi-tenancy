@@ -14,6 +14,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jconfdominicana.config.FlywayService;
 import org.jconfdominicana.model.Profile;
@@ -51,20 +52,20 @@ public class TenantForm {
     private final CacheService cacheService;
     private final NotificationUtils notification;
     private final BeanValidationBinder<Tenant> binder;
-    private final User user;
+    @Setter
+    private User user;
 
     private Tenant element;
     private boolean hasChanges = false;
 
 
     public TenantForm(TenantService tenantService, ProfileService profileService, FlywayService flywayService,
-                      CacheService cacheService, NotificationUtils notification, User user) {
+                      CacheService cacheService, NotificationUtils notification) {
         this.tenantService = tenantService;
         this.profileService = profileService;
         this.flywayService = flywayService;
         this.cacheService = cacheService;
         this.notification = notification;
-        this.user = user;
 
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         cancel.addThemeVariants(ButtonVariant.LUMO_ERROR);
@@ -96,9 +97,7 @@ public class TenantForm {
 
             dialog.setCancelable(true);
             dialog.setCancelButtonTheme(ButtonVariant.LUMO_ERROR.getVariantName());
-            dialog.addCancelListener(event -> {
-                notification.contrast("Created tenant cancelled!");
-            });
+            dialog.addCancelListener(event -> notification.contrast("Created tenant cancelled!"));
 
             dialog.setConfirmText("Save");
             dialog.addConfirmListener(event -> {
@@ -115,12 +114,12 @@ public class TenantForm {
 
                 cacheService.putTenant(user.getUsername(), element);
 
-                Profile profile = new Profile();
-                profile.setUsername(user.getUsername());
-                profile.setName(user.getUsername());
-                profile.setRol(Role.ADMIN);
-
-                profileService.insert(profile);
+//                Profile profile = new Profile();
+//                profile.setUsername(user.getUsername());
+//                profile.setName(user.getUsername());
+//                profile.setRol(Role.ADMIN);
+//
+//                profileService.insert(profile);
 
                 notification.success("Created tenant successfully!");
 
