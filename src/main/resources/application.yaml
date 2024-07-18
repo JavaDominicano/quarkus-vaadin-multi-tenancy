@@ -5,16 +5,16 @@ vaadin:
 
 quarkus:
   log:
-    level: "OFF"
+    level: "INFO"
     category:
       "org.hibernate":
-        level: "OFF"
+        level: "INFO"
       "org.atmosphere":
         level: "OFF"
       "io.quarkus.hibernate.orm":
-        level: "OFF"
+        level: "INFO"
       "org.jconfdominicana":
-        level: DEBUG
+        level: "DEBUG"
       "com.vaadin":
         level: "ERROR"
   #      "io.quarkus.vertx.http":
