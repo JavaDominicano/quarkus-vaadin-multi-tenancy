@@ -5,20 +5,20 @@ vaadin:
 
 quarkus:
   log:
-    level: INFO
+    level: "OFF"
     category:
-#      "org.hibernate":
-#        level: "OFF"
+      "org.hibernate":
+        level: "OFF"
       "org.atmosphere":
         level: "OFF"
-#      "io.quarkus.hibernate.orm":
-#        level: TRACE
-#      "org.jconfdominicana":
-#        level: DEBUG
-#      "com.vaadin":
-#        level: "ERROR"
-#  #      "io.quarkus.vertx.http":
-#  #        level: TRACE
+      "io.quarkus.hibernate.orm":
+        level: "OFF"
+      "org.jconfdominicana":
+        level: DEBUG
+      "com.vaadin":
+        level: "ERROR"
+  #      "io.quarkus.vertx.http":
+  #        level: TRACE
   http:
     host: 0.0.0.0
     auth:
@@ -64,7 +64,7 @@ quarkus:
     dialect: "org.hibernate.dialect.PostgreSQLDialect"
     database:
       generation: none #drop-and-create
-#      default-schema: public
+    #      default-schema: public
     log:
       sql: false
       format-sql: false

@@ -26,6 +26,7 @@ public class TenantInterceptor implements ContainerRequestFilter, ContainerRespo
 
         String tenantId = requestContext.getHeaderString("X-Tenant-ID");
 //        Tenant tenant = tenantService.findByTenantName(tenantId);
+
         if (tenantId != null && !tenantId.isEmpty()) {
             TenantContext.setCurrentTenant(tenantId);
         }

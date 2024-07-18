@@ -1,15 +1,8 @@
 package org.jconfdominicana.config;
 
-import com.vaadin.flow.server.VaadinSession;
 import io.quarkus.hibernate.orm.PersistenceUnitExtension;
 import io.quarkus.hibernate.orm.runtime.tenant.TenantResolver;
-import io.quarkus.undertow.runtime.HttpSessionContext;
-import io.vertx.ext.web.RoutingContext;
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Default;
 import jakarta.inject.Inject;
-import jakarta.servlet.http.HttpSession;
-import jakarta.ws.rs.core.Context;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jconfdominicana.model.common.Tenant;
@@ -37,17 +30,22 @@ public class CurrentTenantResolver implements TenantResolver {
     @Override
     public String resolveTenantId() {
 //        if (VaadinSession.getCurrent() != null) {
-//            System.out.println("Entro aqui: " + VaadinSession.getCurrent().getAttribute("tenant"));
+//            Tenant tenant = (Tenant) VaadinSession.getCurrent().getAttribute("tenant");
+//            if (tenant != null) {
+//                log.info("VIEW Schema: {}", tenant);
+//                return tenant.getTenantId();
+//            }
 //        }
-//        String currentTenant = TenantContext.getCurrentTenant();
-//        if (currentTenant != null && !currentTenant.isEmpty()) {
-//            return currentTenant;
-//        }
+        String currentTenant = TenantContext.getCurrentTenant();
+        if (currentTenant != null && !currentTenant.isEmpty()) {
+            log.info("API schema: {}", currentTenant);
+            return currentTenant;
+        }
 
         if (principal != null && !principal.isEmpty()) {
             Tenant tenant = cacheService.getTenant(principal);
             if (tenant != null) {
-                log.info("Schema: {}", tenant);
+                log.info("VIEW Schema: {}", tenant);
                 return tenant.getTenantId();
             }
         }

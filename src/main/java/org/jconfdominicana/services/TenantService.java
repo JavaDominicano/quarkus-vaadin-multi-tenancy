@@ -8,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.jconfdominicana.model.common.Tenant;
 import org.jconfdominicana.repositories.common.TenantRepository;
 
-import java.util.Optional;
-
 /**
  * @author me@fredpena.dev
  * @created 08/07/2024  - 10:24
@@ -20,7 +18,7 @@ public class TenantService {
 
     private final EntityManager entityManager;
 
-//    private final TenantRepository repository;
+    private final TenantRepository repository;
 
 
     @Transactional
@@ -29,10 +27,10 @@ public class TenantService {
         entityManager.persist(element);
     }
 
-//    public Tenant findByTenantName(String tenantId) {
-//        Tenant tenant = repository.findById(tenantId)
-//                .orElseThrow(() -> new NotFoundException());
-//
-//        return tenant;
-//    }
+    public Tenant findByTenantName(String tenantId) {
+        Tenant tenant = repository.findById(tenantId)
+                .orElseThrow(() -> new NotFoundException());
+
+        return tenant;
+    }
 }
