@@ -20,8 +20,7 @@ public class PersonResource {
     private final PersonRepository personRepository;
 
     @GET
-    public String get(@HeaderParam("X-Tenant-ID") String tenantId) {
-        TenantContext.setCurrentTenant(tenantId);
+    public String get() {
         int size = personRepository.findAll().collect(Collectors.toSet()).size();
         System.out.println(size);
         return "testing";

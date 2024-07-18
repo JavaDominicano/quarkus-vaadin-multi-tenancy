@@ -53,6 +53,7 @@ public class CustomTokenIdentityProvider extends AbstractIdentityProvider {
 
             RoutingContext routingContext = HttpSecurityUtils.getRoutingContextAttribute(request);
             if (routingContext != null) {
+//                TenantContext.setCurrentTenant(routingContext.request().getHeader(TenantContext.PRIVATE_TENANT_HEADER));
                 securityIdentityBuilder.addAttribute(RoutingContext.class.getName(), routingContext);
             }
 

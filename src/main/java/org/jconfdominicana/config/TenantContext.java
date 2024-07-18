@@ -16,10 +16,11 @@ public class TenantContext {
     }
 
     public static void setCurrentTenant(String tenant) {
+        System.out.println("setting current tenant to " + tenant);
         currentTenant.set(tenant);
     }
 
-    public void clear() {
+    public static void clear() {
         currentTenant.remove();
     }
 }

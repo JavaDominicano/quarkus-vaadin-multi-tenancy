@@ -1,5 +1,6 @@
 package org.jconfdominicana.config;
 
+import com.vaadin.flow.server.VaadinSession;
 import io.quarkus.hibernate.orm.PersistenceUnitExtension;
 import io.quarkus.hibernate.orm.runtime.tenant.TenantResolver;
 import io.vertx.ext.web.RoutingContext;
@@ -31,10 +32,13 @@ public class CurrentTenantResolver implements TenantResolver {
 
     @Override
     public String resolveTenantId() {
-//        String currentTenant = TenantContext.getCurrentTenant();
-//        if (currentTenant != null && !currentTenant.isEmpty()) {
-//            return currentTenant;
-//        }
+        if (VaadinSession.getCurrent() != null) {
+            System.out.println(VaadinSession.getCurrent().getSession());
+        }
+        String currentTenant = TenantContext.getCurrentTenant();
+        if (currentTenant != null && !currentTenant.isEmpty()) {
+            return currentTenant;
+        }
 
         if (principal != null && !principal.isEmpty()) {
             Tenant tenant = cacheService.getTenant(principal);
