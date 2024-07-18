@@ -15,9 +15,9 @@ import org.jconfdominicana.model.common.Tenant;
 import org.jconfdominicana.model.common.User;
 import org.jconfdominicana.security.vaadin.CacheService;
 import org.jconfdominicana.security.vaadin.SecurityService;
-import org.jconfdominicana.service.ProfileService;
-import org.jconfdominicana.service.TenantService;
-import org.jconfdominicana.service.UserService;
+import org.jconfdominicana.services.ProfileService;
+import org.jconfdominicana.services.TenantService;
+import org.jconfdominicana.services.UserService;
 import org.jconfdominicana.utlis.NotificationUtils;
 import org.jconfdominicana.vaadin.person.PersonView;
 

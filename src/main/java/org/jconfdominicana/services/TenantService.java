@@ -1,4 +1,4 @@
-package org.jconfdominicana.service;
+package org.jconfdominicana.services;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;

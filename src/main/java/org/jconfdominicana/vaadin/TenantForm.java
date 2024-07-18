@@ -23,8 +23,8 @@ import org.jconfdominicana.model.common.TenantUser;
 import org.jconfdominicana.model.common.User;
 import org.jconfdominicana.security.vaadin.CacheService;
 import org.jconfdominicana.security.vaadin.Role;
-import org.jconfdominicana.service.ProfileService;
-import org.jconfdominicana.service.TenantService;
+import org.jconfdominicana.services.ProfileService;
+import org.jconfdominicana.services.TenantService;
 import org.jconfdominicana.utlis.NotificationUtils;
 
 /**

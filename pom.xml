@@ -123,6 +123,11 @@
             <version>${lombok.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>4.4.0</version>
+        </dependency>
+        <dependency>
             <groupId>jakarta.data</groupId>
             <artifactId>jakarta.data-api</artifactId>
             <version>1.0.0</version>
@@ -194,13 +199,13 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${compiler-plugin.version}</version>
                 <configuration>
-                    <annotationProcessorPaths>
-                        <annotationProcessorPath>
-                            <groupId>org.hibernate</groupId>
-                            <artifactId>hibernate-jpamodelgen</artifactId>
-                            <version>${hibernate.version}</version>
-                        </annotationProcessorPath>
-                    </annotationProcessorPaths>
+<!--                    <annotationProcessorPaths>-->
+<!--                        <annotationProcessorPath>-->
+<!--                            <groupId>org.hibernate</groupId>-->
+<!--                            <artifactId>hibernate-jpamodelgen</artifactId>-->
+<!--                            <version>${hibernate.version}</version>-->
+<!--                        </annotationProcessorPath>-->
+<!--                    </annotationProcessorPaths>-->
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>

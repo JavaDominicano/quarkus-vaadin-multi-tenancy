@@ -29,7 +29,7 @@ import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jconfdominicana.model.common.User;
-import org.jconfdominicana.service.UserService;
+import org.jconfdominicana.services.UserService;
 import org.jconfdominicana.utlis.NotificationUtils;
 
 import java.time.LocalDate;

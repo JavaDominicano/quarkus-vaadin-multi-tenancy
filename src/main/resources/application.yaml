@@ -27,9 +27,13 @@ quarkus:
       #        username-parameter: username
       #        password-parameter: password
       permission:
-        custom1:
+        api:
           paths: /api/*
           policy: authenticated
+          auth-mechanism: bearer
+        api-login:
+          paths: /api/auth/login
+          policy: permit
           auth-mechanism: bearer
         custom2:
           paths: /*
@@ -60,7 +64,7 @@ quarkus:
       generation: none #drop-and-create
 #      default-schema: public
     log:
-      sql: false
+      sql: true
       format-sql: false
       highlight-sql: false
 

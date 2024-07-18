@@ -2,7 +2,9 @@ package org.jconfdominicana.config;
 
 import io.quarkus.hibernate.orm.PersistenceUnitExtension;
 import io.quarkus.hibernate.orm.runtime.tenant.TenantResolver;
-import jakarta.enterprise.context.ApplicationScoped;
+import io.vertx.ext.web.RoutingContext;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Default;
 import jakarta.inject.Inject;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -10,10 +12,8 @@ import org.jconfdominicana.model.common.Tenant;
 import org.jconfdominicana.security.vaadin.CacheService;
 
 @PersistenceUnitExtension
-@ApplicationScoped
 @Slf4j
 //@Priority(1)
-//@Alternative
 public class CurrentTenantResolver implements TenantResolver {
 
     @Inject
@@ -31,6 +31,11 @@ public class CurrentTenantResolver implements TenantResolver {
 
     @Override
     public String resolveTenantId() {
+//        String currentTenant = TenantContext.getCurrentTenant();
+//        if (currentTenant != null && !currentTenant.isEmpty()) {
+//            return currentTenant;
+//        }
+
         if (principal != null && !principal.isEmpty()) {
             Tenant tenant = cacheService.getTenant(principal);
             if (tenant != null) {
