@@ -44,3 +44,5 @@ nb-configuration.xml
 
 frontend/generated
 node_modules
+
+.env

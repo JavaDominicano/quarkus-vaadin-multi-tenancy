@@ -46,7 +46,7 @@ quarkus:
       #          policy: permit
       #          auth-mechanism: basic
       proactive: true
-    port: 8080
+    port: ${PORT:8081}
   datasource:
     db-kind: postgresql
     #    username: postgres

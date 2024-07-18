@@ -1,24 +1,28 @@
 package org.jconfdominicana.security;
 
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import org.jconfdominicana.config.TenantContext;
+
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.quarkus.security.identity.IdentityProviderManager;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.identity.request.AuthenticationRequest;
 import io.quarkus.security.identity.request.TokenAuthenticationRequest;
-import io.quarkus.vertx.http.runtime.security.*;
+import io.quarkus.vertx.http.runtime.security.ChallengeData;
+import io.quarkus.vertx.http.runtime.security.HttpAuthenticationMechanism;
+import io.quarkus.vertx.http.runtime.security.HttpCredentialTransport;
+import io.quarkus.vertx.http.runtime.security.HttpSecurityUtils;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.ext.web.RoutingContext;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.RequiredArgsConstructor;
-import org.jconfdominicana.config.TenantContext;
-
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
-import java.util.logging.Logger;
 
 @ApplicationScoped
 @Priority(1)
