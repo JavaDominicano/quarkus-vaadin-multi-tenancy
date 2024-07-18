@@ -32,6 +32,7 @@ public class CurrentTenantResolver implements TenantResolver {
 
     @Override
     public String resolveTenantId() {
+        System.out.println(VaadinSession.getCurrent());
         if (VaadinSession.getCurrent() != null) {
             System.out.println(VaadinSession.getCurrent().getSession());
         }

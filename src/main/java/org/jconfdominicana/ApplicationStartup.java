@@ -1,5 +1,6 @@
 package org.jconfdominicana;
 
+import com.vaadin.flow.server.ServiceInitEvent;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -34,4 +35,25 @@ public class ApplicationStartup {
 //
 //        userRepository.insertAll(List.of(admin, user));
 //    }
+
+    public void startUp(@Observes ServiceInitEvent event) {
+        event.addIndexHtmlRequestListener(response -> {
+            System.out.println(response);
+            // IndexHtmlRequestListener to change the bootstrap page
+        });
+
+        event.addDependencyFilter((dependencies, filterContext) -> {
+            // DependencyFilter to add/remove/change dependencies sent to
+            // the client
+            System.out.println(dependencies);
+            return dependencies;
+        });
+
+        event.addRequestHandler((session, request, response) -> {
+
+            System.out.println(session + " " + request + " " + response);
+            // RequestHandler to change how responses are handled
+            return false;
+        });
+    }
 }
